@@ -1,6 +1,5 @@
 package com.gmail.blueboxware.libgdxplugin.versions
 
-import com.gmail.blueboxware.libgdxplugin.components.VersionManager
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.util.io.HttpRequests
@@ -9,7 +8,6 @@ import org.w3c.dom.DOMException
 import org.w3c.dom.Element
 import org.xml.sax.SAXException
 import java.io.IOException
-import java.io.InputStream
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.FactoryConfigurationError
 import javax.xml.parsers.ParserConfigurationException
@@ -45,13 +43,13 @@ internal open class Library(
   val versionKey = PERSISTENT_STATE_KEY_VERSION_PREFIX + groupId + "_" + artifactId
   private val timeKey = PERSISTENT_STATE_KEY_TIME_PREFIX + groupId + "_" + artifactId
 
-  open fun getLatestVersion(versionManager: VersionManager) = latestVersion
+  open fun getLatestVersion(versionService: VersionService) = latestVersion
 
-  open fun updateLatestVersion(versionManager: VersionManager, networkAllowed: Boolean): Boolean {
+  open fun updateLatestVersion(versionService: VersionService, networkAllowed: Boolean): Boolean {
 
     val currentTime = System.currentTimeMillis()
 
-    if (latestVersion != null && currentTime - lastUpdated < VersionManager.SCHEDULED_UPDATE_INTERVAL * 2) {
+    if (latestVersion != null && currentTime - lastUpdated < VersionService.SCHEDULED_UPDATE_INTERVAL * 2) {
       return false
     }
 
@@ -61,7 +59,7 @@ internal open class Library(
           if (lastUpdated < time || latestVersion == null) {
             lastUpdated = time
             latestVersion = MavenComparableVersion(version)
-            if (currentTime - lastUpdated < VersionManager.SCHEDULED_UPDATE_INTERVAL) {
+            if (currentTime - lastUpdated < VersionService.SCHEDULED_UPDATE_INTERVAL) {
               return false
             }
           } else if (latestVersion != null) {
@@ -72,7 +70,7 @@ internal open class Library(
       }
     }
 
-    if (currentTime - lastUpdated > VersionManager.SCHEDULED_UPDATE_INTERVAL && networkAllowed) {
+    if (currentTime - lastUpdated > VersionService.SCHEDULED_UPDATE_INTERVAL && networkAllowed) {
 
       fetchVersions(
               onSuccess = { versions ->
@@ -95,11 +93,14 @@ internal open class Library(
 
   }
 
-  protected fun fetchVersions(onSuccess: (List<String>) -> Unit, onFailure: () -> Unit) {
+  private fun fetchVersions(onSuccess: (List<String>) -> Unit, onFailure: () -> Unit) {
 
-    val url = (TEST_URL ?: repository.baseUrl) + groupId.replace('.', '/') + "/" + artifactId + "/" + META_DATA_FILE
-
-    VersionManager.LOG.info("Fetching $url")
+    val baseUrl = TEST_URL ?: repository.baseUrl
+    val url = if (repository == Repository.JITPACK) {
+      "$baseUrl$groupId/$artifactId"
+    } else {
+      "$baseUrl${groupId.replace('.', '/')}/$artifactId/$META_DATA_FILE"
+    }
 
     ApplicationManager.getApplication().executeOnPooledThread {
 
@@ -108,24 +109,30 @@ internal open class Library(
         HttpRequests.request(url).connect { request ->
 
           try {
-            extractVersionsFromMavenMetaData(request.inputStream)?.let { versions ->
+            val content = request.readString()
+            extractVersions(content)?.let { versions ->
               onSuccess(versions)
             }
           } catch (e: IOException) {
-            VersionManager.LOG.warn("Could not fetch $url", e)
             onFailure()
           }
 
         }
 
       } catch (e: IOException) {
-        VersionManager.LOG.warn("Could not fetch $url", e)
         onFailure()
       }
 
     }
 
   }
+
+  private fun extractVersions(content: String): List<String>? =
+          if (repository == Repository.JITPACK) {
+            extractVersionsFromJitpack(content)
+          } else {
+            extractVersionsFromMavenMetaData(content)
+          }
 
   companion object {
 
@@ -136,33 +143,64 @@ internal open class Library(
     const val PERSISTENT_STATE_KEY_VERSION_PREFIX = "com.gmail.blueboxware.libgdxplugin.versions."
     const val PERSISTENT_STATE_KEY_TIME_PREFIX = "com.gmail.blueboxware.libgdxplugin.time."
 
-    fun extractVersionsFromMavenMetaData(inputStream: InputStream): List<String>? {
+    fun extractVersionsFromJitpack(input: String): List<String> =
+            Regex(""" " v?(\d+\.\d+[^"]*) " \s* : \s* "ok """, RegexOption.COMMENTS)
+                    .findAll(input)
+                    .map {
+                      it.groupValues[1]
+                    }
+                    .toList()
+
+    fun extractVersionsFromMavenMetaData(input: String): List<String>? {
 
       try {
 
         val builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-        val document = builder.parse(inputStream)
-        val versionElements = (document.getElementsByTagName("versioning").item(0) as? Element)?.getElementsByTagName("version")
-                ?: return null
+        val document = builder.parse(input.toByteArray().inputStream())
 
-        val result = mutableListOf<String>()
+        if (document.textContent != null) {
+          val versionElements =
+                  (document
+                          .getElementsByTagName("versioning")
+                          .item(0) as? Element)
+                          ?.getElementsByTagName("version")
+                          ?: return null
 
-        for (index in 0 until versionElements.length) {
-          val content = (versionElements.item(index) as? Element)?.textContent ?: continue
-          result.add(content)
+          val result = mutableListOf<String>()
+
+          for (index in 0 until versionElements.length) {
+            val content = (versionElements.item(index) as? Element)?.textContent ?: continue
+            result.add(content)
+          }
+
+          return result
+        } else {
+
+          Regex(
+                  """<versions>(.*?)</versions>""",
+                  RegexOption.DOT_MATCHES_ALL
+          ).find(input)
+                  ?.groupValues
+                  ?.get(1)
+                  ?.let { versions ->
+                    return Regex("""<version>([^<]+)</version>""")
+                            .findAll(versions)
+                            .mapNotNull { it.groupValues[1] }
+                            .toList()
+                  }
+
         }
-
-        return result
 
       } catch (e: Exception) {
         if (e is FactoryConfigurationError || e is ParserConfigurationException || e is IOException || e is SAXException || e is IllegalArgumentException || e is DOMException) {
-          VersionManager.LOG.info(e)
+          VersionService.LOG.info(e)
           return null
         } else {
           throw e
         }
       }
 
+      return null
     }
 
   }

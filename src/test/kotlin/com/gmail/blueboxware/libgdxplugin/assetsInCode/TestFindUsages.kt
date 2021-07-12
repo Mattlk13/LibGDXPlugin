@@ -23,6 +23,7 @@ import com.intellij.usageView.UsageInfo
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@Suppress("ReplaceNotNullAssertionWithElvisReturn")
 class TestFindUsages: AssetsInCodeCodeInsightFixtureTestCase() {
 
   fun testFindUsages1() {
@@ -70,7 +71,7 @@ class TestFindUsages: AssetsInCodeCodeInsightFixtureTestCase() {
       usageInfo.element?.let { element ->
         assertEquals(target.name, StringUtil.stripQuotesAroundValue(element.text))
 
-        val references = element.references.filter { it is AssetReference }
+        val references = element.references.filterIsInstance<AssetReference>()
         assertEquals(1, references.size)
         val resolved = references.firstOrNull()?.resolve() as? PsiNamedElement
         assertNotNull(resolved)

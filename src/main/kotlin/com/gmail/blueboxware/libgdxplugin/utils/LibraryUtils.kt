@@ -1,17 +1,19 @@
 package com.gmail.blueboxware.libgdxplugin.utils
 
-import com.gmail.blueboxware.libgdxplugin.components.VersionManager
+import com.gmail.blueboxware.libgdxplugin.versions.VersionService
 import com.gmail.blueboxware.libgdxplugin.message
 import com.gmail.blueboxware.libgdxplugin.versions.Libraries
 import com.gmail.blueboxware.libgdxplugin.versions.libs.LibGDXLibrary
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.components.service
 import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.impl.libraries.LibraryImpl
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.KtValueArgumentList
+import org.jetbrains.kotlin.psi.psiUtil.plainContent
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrAssignmentExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrCommandArgumentList
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals.GrLiteral
@@ -32,9 +34,14 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-internal fun checkVersionAndReport(holder: ProblemsHolder, element: PsiElement, lib: Libraries, version: MavenComparableVersion?) {
+internal fun checkVersionAndReport(
+        holder: ProblemsHolder,
+        element: PsiElement,
+        lib: Libraries,
+        version: MavenComparableVersion?
+) {
 
-  val versionManager = holder.project.getComponent(VersionManager::class.java) ?: return
+  val versionManager = holder.project.service<VersionService>()
 
   val latestVersion = versionManager.getLatestVersion(lib) ?: return
   val usedVersion = version ?: run {
@@ -43,7 +50,7 @@ internal fun checkVersionAndReport(holder: ProblemsHolder, element: PsiElement, 
     } else {
       versionManager.getUsedVersion(lib)
     }
-  }!!
+  } ?: return
 
   if (usedVersion < latestVersion) {
 
@@ -58,7 +65,7 @@ internal fun checkVersionAndReport(holder: ProblemsHolder, element: PsiElement, 
 
 internal fun getLibraryInfoFromIdeaLibrary(library: Library): Pair<Libraries, MavenComparableVersion>? {
 
-  if ((library as? LibraryImpl)?.isDisposed == true) {
+  if ((library as? LibraryEx)?.isDisposed == true) {
     return null
   }
 
@@ -135,13 +142,11 @@ internal fun getLibraryInfoFromGroovyAssignment(grAssignmentExpression: GrAssign
         }
 
 internal fun getLibraryFromKotlinString(ktStringTemplateExpression: KtStringTemplateExpression): Libraries? =
-        ktStringTemplateExpression.asPlainString()?.let { str ->
-          getLibraryFromMavenCoordString(str)
-        }
+        getLibraryFromMavenCoordString(ktStringTemplateExpression.plainContent)
 
 
 internal fun getLibraryInfoFromKotlinString(ktStringTemplateExpression: KtStringTemplateExpression): Pair<Libraries, MavenComparableVersion?>? =
-        ktStringTemplateExpression.asPlainString()?.let { str ->
+        ktStringTemplateExpression.plainContent.let { str ->
           getLibraryFromKotlinString(ktStringTemplateExpression)?.let { lib ->
             lib.getVersionFromMavenCoordString(str).let { version ->
               lib to version
@@ -187,7 +192,7 @@ private fun getVersionFromKotlinArgumentList(ktValueArgumentList: KtValueArgumen
         ktValueArgumentList.getNamedArgumentPlainContent("version")?.let(::MavenComparableVersion)
 
 private fun KtValueArgumentList.getNamedArgumentPlainContent(name: String): String? =
-        (getNamedArgument(name) as? KtStringTemplateExpression)?.asPlainString()
+        (getNamedArgument(name) as? KtStringTemplateExpression)?.plainContent
 
 private fun String.toVersion() =
         takeIf { contains('.') && !any { char -> char in listOf('$', '"', '\'') } }?.let(::MavenComparableVersion)

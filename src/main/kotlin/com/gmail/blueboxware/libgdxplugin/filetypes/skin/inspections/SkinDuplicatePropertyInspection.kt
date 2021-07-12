@@ -25,26 +25,26 @@ class SkinDuplicatePropertyInspection: SkinBaseInspection() {
 
   override fun getStaticDescription() = message("skin.inspection.duplicate.property.description")
 
-  override fun getID() = "LibGDXSkinDuplicateProperty"
+  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
+          object: SkinElementVisitor() {
 
-  override fun getDisplayName() = message("skin.inspection.duplicate.property.display.name")
+            override fun visitObject(o: SkinObject) {
 
-  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = object: SkinElementVisitor() {
+              val seenPropertyNames = mutableSetOf<String>()
 
-    override fun visitObject(o: SkinObject) {
+              o.propertyList.forEach { property ->
+                if (seenPropertyNames.contains(property.name)) {
+                  holder.registerProblem(
+                          property.propertyName,
+                          message("skin.inspection.duplicate.property.message", property.name)
+                  )
+                } else {
+                  seenPropertyNames.add(property.name)
+                }
+              }
 
-      val seenPropertyNames = mutableSetOf<String>()
+            }
 
-      o.propertyList.forEach { property ->
-        if (seenPropertyNames.contains(property.name)) {
-          holder.registerProblem(property.propertyName, message("skin.inspection.duplicate.property.message", property.name))
-        } else {
-          seenPropertyNames.add(property.name)
-        }
-      }
-
-    }
-
-  }
+          }
 
 }

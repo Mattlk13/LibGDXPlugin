@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.search.projectScope
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@Suppress("ReplaceNotNullAssertionWithElvisReturn")
 class TestFindUsages: PropertiesCodeInsightFixtureTestCase() {
 
   fun testFindUsages1() {
@@ -50,18 +51,25 @@ class TestFindUsages: PropertiesCodeInsightFixtureTestCase() {
 
   fun doTest(nrOfUsages: Int, propertiesFileName: String, key: String) {
 
-    val property = FilenameIndex.getFilesByName(project, propertiesFileName, project.projectScope()).first().let { file ->
-      (file as PropertiesFile).findPropertyByKey(key)!!.let {
-        it as Property
-      }
-    }
+    val property =
+            FilenameIndex.getFilesByName(
+                    project,
+                    propertiesFileName,
+                    project.projectScope()
+            )
+                    .first()
+                    .let { file ->
+                      (file as PropertiesFile).findPropertyByKey(key)!!.let {
+                        it as Property
+                      }
+                    }
 
     val usagesInfos = myFixture.findUsages(property)
     assertEquals(nrOfUsages, usagesInfos.size)
 
     for (usageInfo in usagesInfos) {
       usageInfo.element?.let { element ->
-        val references = element.references.filter { it is GDXPropertyReference }
+        val references = element.references.filterIsInstance<GDXPropertyReference>()
         assertFalse(references.isEmpty())
         references.forEach { reference ->
           (reference as? GDXPropertyReference)?.multiResolve(true)?.forEach { resolved ->

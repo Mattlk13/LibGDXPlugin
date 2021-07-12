@@ -21,4 +21,6 @@ public interface GdxJsonValue extends GdxJsonElement {
 
   boolean isPropertyValue();
 
+  boolean isObject();
+
 }

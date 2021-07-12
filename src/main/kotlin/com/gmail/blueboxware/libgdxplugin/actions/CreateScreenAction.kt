@@ -1,6 +1,7 @@
 package com.gmail.blueboxware.libgdxplugin.actions
 
 import com.gmail.blueboxware.libgdxplugin.utils.isLibGDXProject
+import com.intellij.icons.AllIcons
 import com.intellij.ide.actions.CreateFileFromTemplateAction
 import com.intellij.ide.actions.CreateFileFromTemplateDialog
 import com.intellij.ide.highlighter.JavaFileType
@@ -9,7 +10,6 @@ import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.IconLoader
 import com.intellij.psi.PsiDirectory
 import org.jetbrains.kotlin.idea.KotlinFileType
 
@@ -28,14 +28,19 @@ import org.jetbrains.kotlin.idea.KotlinFileType
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-class CreateScreenAction: CreateFileFromTemplateAction("LibGDX Screen", "Creates new LibGDX Screen", IconLoader.getIcon("/runConfigurations/application.png")) {
+@Suppress("DialogTitleCapitalization")
+class CreateScreenAction: CreateFileFromTemplateAction(
+        "libGDX Screen",
+        "Creates new libGDX Screen",
+        AllIcons.RunConfigurations.Application
+) {
 
-  override fun getActionName(directory: PsiDirectory?, newName: String, templateName: String?) = "LibGDX Screen"
+  override fun getActionName(directory: PsiDirectory?, newName: String, templateName: String?) = "libGDX Screen"
 
-  override fun buildDialog(project: Project?, directory: PsiDirectory?, builder: CreateFileFromTemplateDialog.Builder) {
-    builder.setTitle("New LibGDX Screen")
-            .addKind("Java", JavaFileType.INSTANCE.icon, "LibGDX Screen (Java)")
-            .addKind("Kotlin", KotlinFileType.INSTANCE.icon, "LibGDX Screen (Kotlin)")
+  override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
+    builder.setTitle("New libGDX Screen")
+            .addKind("Java", JavaFileType.INSTANCE.icon, "libGDX Screen (Java)")
+            .addKind("Kotlin", KotlinFileType.INSTANCE.icon, "libGDX Screen (Kotlin)")
   }
 
   override fun isAvailable(dataContext: DataContext): Boolean {

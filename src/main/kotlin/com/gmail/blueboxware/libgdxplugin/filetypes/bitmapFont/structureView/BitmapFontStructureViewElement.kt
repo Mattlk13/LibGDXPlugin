@@ -43,30 +43,36 @@ open class BitmapFontStructureViewElement(val element: PsiElement?): StructureVi
         result.add(BitmapFontStructureViewElement(it))
       }
       element.getPages().firstOrNull()?.let { firstPage ->
-        result.add(MyStructureViewElement(
-                element = firstPage,
-                presentableText = "Pages",
-                sortKey = "3",
-                icon = AllIcons.Nodes.Folder,
-                myChildren = element.getPages().map(::BitmapFontStructureViewElement)
-        ))
+        result.add(
+                MyStructureViewElement(
+                        element = firstPage,
+                        presentableText = "Pages",
+                        sortKey = "3",
+                        icon = AllIcons.Nodes.Folder,
+                        myChildren = element.getPages().map(::BitmapFontStructureViewElement)
+                )
+        )
       }
       element.getCharsElement()?.let { charsElement ->
-        result.add(MyStructureViewElement(
-                element = charsElement,
-                presentableText = "Characters",
-                sortKey = "4",
-                myChildren = element.getCharacters().map(::BitmapFontStructureViewElement)
-        ))
+        result.add(
+                MyStructureViewElement(
+                        element = charsElement,
+                        presentableText = "Characters",
+                        sortKey = "4",
+                        myChildren = element.getCharacters().map(::BitmapFontStructureViewElement)
+                )
+        )
       }
       element.getKerningsElement()?.let { kerningsElement ->
-        result.add(MyStructureViewElement(
-                element = kerningsElement,
-                presentableText = "Kernings",
-                sortKey = "5",
-                icon = AllIcons.Nodes.Tag,
-                myChildren = element.getKernings().map(::BitmapFontStructureViewElement)
-        ))
+        result.add(
+                MyStructureViewElement(
+                        element = kerningsElement,
+                        presentableText = "Kernings",
+                        sortKey = "5",
+                        icon = AllIcons.Nodes.Tag,
+                        myChildren = element.getKernings().map(::BitmapFontStructureViewElement)
+                )
+        )
       }
 
     } else if (element is PropertyContainer) {
@@ -89,37 +95,43 @@ open class BitmapFontStructureViewElement(val element: PsiElement?): StructureVi
 
   override fun getAlphaSortKey(): String {
 
-    if (element is BitmapFontFontChar) {
-      return String.format("%010d", element.character)
-    } else if (element is BitmapFontPageDefinition) {
-      try {
-        element.getValue("id")?.toInt()?.let {
-          return String.format("%03d", it)
-        }
-      } catch (e: NumberFormatException) {
-        // Nothing
+    when (element) {
+      is BitmapFontFontChar -> {
+        return String.format("%010d", element.character)
       }
-      return ""
-    } else if (element is BitmapFontKerning) {
-      try {
-        val first = element.getValue("first")?.toInt()
-        val second = element.getValue("second")?.toInt()
-        if (first != null && second != null) {
-          return String.format("%010d%010d", first, second)
+      is BitmapFontPageDefinition -> {
+        try {
+          element.getValue("id")?.toInt()?.let {
+            return String.format("%03d", it)
+          }
+        } catch (e: NumberFormatException) {
+          // Nothing
         }
-      } catch (e: NumberFormatException) {
-        // Nothing
+        return ""
       }
-      return "Z"
-    } else if (element is BitmapFontProperty) {
-      return element.key
-    } else if (element is BitmapFontInfo) {
-      return "1"
-    } else if (element is BitmapFontCommon) {
-      return "2"
+      is BitmapFontKerning -> {
+        try {
+          val first = element.getValue("first")?.toInt()
+          val second = element.getValue("second")?.toInt()
+          if (first != null && second != null) {
+            return String.format("%010d%010d", first, second)
+          }
+        } catch (e: NumberFormatException) {
+          // Nothing
+        }
+        return "Z"
+      }
+      is BitmapFontProperty -> {
+        return element.key
+      }
+      is BitmapFontInfo -> {
+        return "1"
+      }
+      is BitmapFontCommon -> {
+        return "2"
+      }
+      else -> return ""
     }
-
-    return ""
 
   }
 }

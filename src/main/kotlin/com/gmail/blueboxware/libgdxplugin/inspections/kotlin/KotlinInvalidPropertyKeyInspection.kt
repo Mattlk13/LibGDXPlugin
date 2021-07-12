@@ -3,7 +3,6 @@ package com.gmail.blueboxware.libgdxplugin.inspections.kotlin
 import com.gmail.blueboxware.libgdxplugin.inspections.isValidProperty
 import com.gmail.blueboxware.libgdxplugin.message
 import com.gmail.blueboxware.libgdxplugin.utils.asPlainString
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.KtVisitorVoid
@@ -28,19 +27,18 @@ class KotlinInvalidPropertyKeyInspection: LibGDXKotlinBaseInspection() {
 
   override fun getStaticDescription() = message("invalid.property.key.inspection.html.description")
 
-  override fun getID() = "LibGDXInvalidPropertyKey"
-
-  override fun getDisplayName() = message("invalid.property.key.inspection")
-
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.ERROR
-
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object: KtVisitorVoid() {
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {
 
       if (!isValidProperty(expression)) {
-        holder.registerProblem(expression, message("invalid.property.key.inspection.problem.descriptor", expression.asPlainString()
-                ?: ""))
+        holder.registerProblem(
+                expression,
+                message(
+                        "invalid.property.key.inspection.problem.descriptor", expression.asPlainString()
+                        ?: ""
+                )
+        )
       }
 
     }

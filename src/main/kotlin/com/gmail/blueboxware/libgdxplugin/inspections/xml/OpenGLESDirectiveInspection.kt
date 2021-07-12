@@ -26,12 +26,6 @@ class OpenGLESDirectiveInspection: LibGDXXmlBaseInspection() {
 
   override fun getStaticDescription() = message("no.opengl.html.description")
 
-  override fun getID() = "LibGDXOpenGLVersion"
-
-  override fun getDisplayName() = message("no.opengl.directive.display.name")
-
-  override fun getGroupPath() = arrayOf("LibGDX", "Android")
-
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
 
     if (holder.file.name != "AndroidManifest.xml") {
@@ -45,8 +39,11 @@ class OpenGLESDirectiveInspection: LibGDXXmlBaseInspection() {
 
         ManifestModel.fromFile(file).openGLESVersion.let { (value, element) ->
           if (value < 0x00020000) {
-            holder.registerProblem(element
-                    ?: file, message("no.opengl.directive.problem.descriptor") + (if (element == null) ". " + message("no.opengl.html.description") else ""))
+            holder.registerProblem(
+                    element ?: file,
+                    message("no.opengl.directive.problem.descriptor") +
+                            (if (element == null) ". " + message("no.opengl.html.description") else "")
+            )
           }
         }
       }

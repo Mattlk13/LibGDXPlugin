@@ -27,6 +27,7 @@ import java.awt.Color
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@Suppress("ReplaceNotNullAssertionWithElvisReturn")
 class TestSetColor: LibGDXCodeInsightFixtureTestCase() {
 
   fun test1() = doTest { keepColorOnOneLine(true) }
@@ -81,7 +82,15 @@ class TestSetColor: LibGDXCodeInsightFixtureTestCase() {
     init?.invoke()
     (file as? SkinFile).let { skinFile ->
       assertNotNull(skinFile)
-      val newColor = skinFile!!.getClassSpecifications("newColor").firstOrNull()?.getResource("color")?.`object`?.asColor(true)
+
+      val newColor =
+              skinFile!!
+                      .getClassSpecifications("newColor")
+                      .firstOrNull()
+                      ?.getResource("color")
+                      ?.`object`
+                      ?.asColor(true)
+
       assertNotNull(newColor)
       val colorObject = skinFile.getClassSpecifications(COLOR_CLASS_NAME).firstOrNull()?.getResource("color")?.`object`
       assertNotNull(colorObject)

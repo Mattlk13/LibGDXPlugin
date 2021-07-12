@@ -44,23 +44,28 @@ class ClassTagFindUsagesHandler private constructor(element: PsiElement): FindUs
 
   constructor(element: KtStringTemplateExpression): this(element as PsiElement)
 
-  override fun processElementUsages(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
+  override fun processElementUsages(
+          element: PsiElement,
+          processor: Processor<in UsageInfo>,
+          options: FindUsagesOptions
+  ): Boolean {
 
     ReadAction.run<Throwable> {
 
-      val text = if (element is PsiLiteralExpression) {
-        element.asString()
-      } else if (element is KtStringTemplateExpression) {
-        element.asPlainString()
-      } else {
-        null
+      val text = when (element) {
+        is PsiLiteralExpression -> element.asString()
+        is KtStringTemplateExpression -> element.asPlainString()
+        else -> null
       }
 
       val usages =
               CachedValuesManager.getManager(element.project).getCachedValue(
                       element,
-                      MyCachedValueProvider(project, text, (options.searchScope as? GlobalSearchScope)
-                              ?: project.allScope())
+                      MyCachedValueProvider(
+                              project,
+                              text,
+                              (options.searchScope as? GlobalSearchScope) ?: project.allScope()
+                      )
               )
 
       usages?.forEach { usage ->
@@ -81,7 +86,7 @@ private class MyCachedValueProvider(
         val scope: GlobalSearchScope
 ): CachedValueProvider<Collection<SkinClassName>> {
 
-  override fun compute(): CachedValueProvider.Result<Collection<SkinClassName>>? {
+  override fun compute(): CachedValueProvider.Result<Collection<SkinClassName>> {
 
     // Don't store UsageInfo: it leads to double smart pointer removal
     val usages = mutableListOf<SkinClassName>()

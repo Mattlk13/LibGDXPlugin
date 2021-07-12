@@ -9,7 +9,6 @@ import com.gmail.blueboxware.libgdxplugin.utils.DEFAULT_TAGGED_CLASSES_NAMES
 import com.gmail.blueboxware.libgdxplugin.utils.DollarClassName
 import com.gmail.blueboxware.libgdxplugin.utils.getKey
 import com.gmail.blueboxware.libgdxplugin.utils.isLibGDX199
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.LocalQuickFixOnPsiElement
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.SuppressQuickFix
@@ -38,42 +37,41 @@ class SkinAbbrClassInspection: SkinBaseInspection() {
 
   override fun getStaticDescription() = message("skin.inspection.abbr.class.description")
 
-  override fun getID() = "LibGDXSkinAbbrClass"
-
-  override fun getDisplayName() = message("skin.inspection.abbr.class.display.name")
-
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.WEAK_WARNING
-
   override fun getBatchSuppressActions(element: PsiElement?): Array<SuppressQuickFix> =
           arrayOf(
-                  SuppressForObjectFix(getShortID()),
-                  SuppressForFileFix(getShortID())
+                  SuppressForObjectFix(id),
+                  SuppressForFileFix(id)
           )
 
-  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = object: SkinElementVisitor() {
+  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
+          object: SkinElementVisitor() {
 
-    override fun visitClassName(skinClassName: SkinClassName) {
+            override fun visitClassName(skinClassName: SkinClassName) {
 
-      if (!skinClassName.project.isLibGDX199()) {
-        return
-      }
+              if (!skinClassName.project.isLibGDX199()) {
+                return
+              }
 
-      skinClassName.resolve()?.let(::DollarClassName)?.takeIf { it == skinClassName.value }?.let { fqName ->
+              skinClassName
+                      .resolve()
+                      ?.let(::DollarClassName)
+                      ?.takeIf { it == skinClassName.value }
+                      ?.let { fqName ->
 
-        DEFAULT_TAGGED_CLASSES_NAMES.getKey(fqName.plainName)?.let { shortName ->
+                        DEFAULT_TAGGED_CLASSES_NAMES.getKey(fqName.plainName)?.let { shortName ->
 
-          holder.registerProblem(
-                  skinClassName,
-                  message("skin.inspection.abbr.class.message", shortName),
-                  QuickFix(skinClassName, DollarClassName(shortName))
-          )
+                          holder.registerProblem(
+                                  skinClassName,
+                                  message("skin.inspection.abbr.class.message", shortName),
+                                  QuickFix(skinClassName, DollarClassName(shortName))
+                          )
 
-        }
+                        }
 
-      }
+                      }
 
-    }
-  }
+            }
+          }
 
   private class QuickFix(element: SkinClassName, val shortName: DollarClassName): LocalQuickFixOnPsiElement(element) {
 

@@ -19,7 +19,6 @@ import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.*
 import com.intellij.util.PathUtil
 import com.intellij.util.ProcessingContext
-import com.jetbrains.jsonSchema.JsonSchemaFileType
 
 /*
  * Copyright 2017 Blue Box Ware
@@ -48,7 +47,11 @@ class JavaReferenceContributor: PsiReferenceContributor() {
     createAssetAnnotationProvider(
             registrar,
             ASSET_ANNOTATION_SKIN_PARAM_NAME,
-            listOf(LibGDXSkinFileType.INSTANCE, JsonFileType.INSTANCE, JsonSchemaFileType.INSTANCE, PlainTextFileType.INSTANCE),
+            listOf(
+                    LibGDXSkinFileType.INSTANCE,
+                    JsonFileType.INSTANCE,
+                    PlainTextFileType.INSTANCE
+            ),
             listOf(LibGDXSkinLanguage.INSTANCE)
     )
 
@@ -68,12 +71,21 @@ class JavaReferenceContributor: PsiReferenceContributor() {
 
   }
 
-  private fun createAssetAnnotationProvider(registrar: PsiReferenceRegistrar, paramName: String, fileTypes: List<FileType>, preferableLangs: List<Language>) {
+  private fun createAssetAnnotationProvider(
+          registrar: PsiReferenceRegistrar,
+          paramName: String,
+          fileTypes: List<FileType>,
+          preferableLangs: List<Language>
+  ) {
 
     registrar.registerReferenceProvider(
-            PsiJavaPatterns.literalExpression(StandardPatterns.string()).insideAnnotationParam(StandardPatterns.string().equalTo(ASSET_ANNOTATION_NAME), paramName),
+            PsiJavaPatterns.literalExpression(StandardPatterns.string())
+                    .insideAnnotationParam(StandardPatterns.string().equalTo(ASSET_ANNOTATION_NAME), paramName),
             object: PsiReferenceProvider() {
-              override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference> {
+              override fun getReferencesByElement(
+                      element: PsiElement,
+                      context: ProcessingContext
+              ): Array<out PsiReference> {
                 ((element as? PsiLiteralExpression)?.value as? String)?.let { path ->
                   return arrayOf(
                           FileReference(
@@ -87,8 +99,7 @@ class JavaReferenceContributor: PsiReferenceContributor() {
 
                 return arrayOf()
               }
-            }
-    )
+            })
 
   }
 

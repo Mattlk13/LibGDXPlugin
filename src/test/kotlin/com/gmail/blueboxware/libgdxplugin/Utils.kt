@@ -21,7 +21,6 @@ import com.intellij.testFramework.UsefulTestCase
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-fun UsefulTestCase.testname() = if (this.name == null) "" else PlatformTestUtil.getTestName(name, true)
+internal fun UsefulTestCase.testname() = if (this.name == null) "" else PlatformTestUtil.getTestName(name, true)
 
 internal fun PsiFile.markAsGdxJson() = project.markFileAsGdxJson(virtualFile)
-

@@ -25,12 +25,13 @@ class BitmapFontFileType: LanguageFileType(BitmapFontLanguage.INSTANCE) {
     val INSTANCE = BitmapFontFileType()
   }
 
-  override fun getIcon(): Icon? = Icons.FONT_FILETYPE
+  override fun getIcon(): Icon = Icons.FONT_FILETYPE
 
-  override fun getName(): String = "LibGDX Bitmap Font"
+  override fun getName(): String = "libGDX Bitmap Font"
 
   override fun getDefaultExtension() = "fnt"
 
-  override fun getDescription() = "LibGDX Bitmap Font file"
+  @Suppress("DialogTitleCapitalization")
+  override fun getDescription() = "libGDX bitmap font file"
 
 }

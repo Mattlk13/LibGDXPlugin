@@ -1,6 +1,5 @@
 package com.gmail.blueboxware.libgdxplugin.inspections.gradle
 
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.lang.properties.PropertiesInspectionBase
 
 /*
@@ -19,14 +18,4 @@ import com.intellij.lang.properties.PropertiesInspectionBase
  * limitations under the License.
  */
 
-abstract class LibGDXGradlePropertiesBaseInspection: PropertiesInspectionBase() {
-
-  override fun getGroupPath() = arrayOf("LibGDX", "Gradle")
-
-  override fun getGroupDisplayName() = "LibGDX"
-
-  override fun isEnabledByDefault() = true
-
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.WARNING
-
-}
+abstract class LibGDXGradlePropertiesBaseInspection: PropertiesInspectionBase()

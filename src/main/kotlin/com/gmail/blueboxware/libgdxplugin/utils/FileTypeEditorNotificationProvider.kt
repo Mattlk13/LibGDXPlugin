@@ -29,9 +29,10 @@ import com.intellij.ui.EditorNotifications
  */
 abstract class FileTypeEditorNotificationProvider(
         protected val project: Project,
-        private val forLanguage: Language,
-        private val notifications: EditorNotifications
+        private val forLanguage: Language
 ): EditorNotifications.Provider<EditorNotificationPanel>() {
+
+  private val notifications: EditorNotifications = EditorNotifications.getInstance(project)
 
   abstract val messageKey: String
 
@@ -39,9 +40,18 @@ abstract class FileTypeEditorNotificationProvider(
   abstract fun onNo(file: VirtualFile)
   abstract fun onNever(settings: LibGDXPluginSettings)
 
-  abstract fun shouldShowNotification(currentLanguage: Language?, file: VirtualFile, fileEditor: TextEditor, settings: LibGDXPluginSettings): Boolean
+  abstract fun shouldShowNotification(
+          currentLanguage: Language?,
+          file: VirtualFile,
+          fileEditor: TextEditor,
+          settings: LibGDXPluginSettings
+  ): Boolean
 
-  override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
+  override fun createNotificationPanel(
+          file: VirtualFile,
+          fileEditor: FileEditor,
+          project: Project
+  ): EditorNotificationPanel? {
 
     if (fileEditor !is TextEditor) {
       return null
@@ -61,7 +71,7 @@ abstract class FileTypeEditorNotificationProvider(
 
     return EditorNotificationPanel().apply {
 
-      setText(message(messageKey, file.fileType.description))
+      text = message(messageKey, file.fileType.description)
 
       createActionLabel(message("filetype.yes")) {
         onYes(file)

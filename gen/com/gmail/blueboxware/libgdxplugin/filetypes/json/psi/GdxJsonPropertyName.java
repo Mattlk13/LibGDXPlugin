@@ -7,9 +7,4 @@ import com.intellij.psi.PsiElement;
 
 public interface GdxJsonPropertyName extends GdxJsonString {
 
-  @NotNull
-  String getValue();
-
-  boolean isQuoted();
-
 }

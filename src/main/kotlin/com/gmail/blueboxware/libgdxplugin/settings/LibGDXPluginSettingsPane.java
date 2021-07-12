@@ -41,13 +41,9 @@ public class LibGDXPluginSettingsPane {
     JComponent createPanel(@NotNull LibGDXPluginSettings settings) {
         this.settings = settings;
 
-        resetJson.addActionListener(e -> {
-            LanguageSubstitutionUtilsKt.resetJsonAssociations(root);
-        });
+        resetJson.addActionListener(e -> LanguageSubstitutionUtilsKt.resetJsonAssociations(root));
 
-        resetSkin.addActionListener(e -> {
-            LanguageSubstitutionUtilsKt.resetSkinAssociations(root);
-        });
+        resetSkin.addActionListener(e -> LanguageSubstitutionUtilsKt.resetSkinAssociations(root));
 
         return root;
     }
@@ -156,6 +152,7 @@ public class LibGDXPluginSettingsPane {
         return root;
     }
 
+    @SuppressWarnings("EmptyMethod")
     private void createUIComponents() {
 
     }

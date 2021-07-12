@@ -11,7 +11,6 @@ import com.intellij.util.ui.ColorIcon
 import com.sun.jdi.ClassNotPreparedException
 import com.sun.jdi.FloatValue
 import com.sun.jdi.ObjectReference
-import java.lang.IllegalArgumentException
 import javax.swing.Icon
 
 /*
@@ -29,9 +28,9 @@ import javax.swing.Icon
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-class LibGDXColorObjectRenderer(rendererSettings: NodeRendererSettings): CompoundReferenceRenderer(
-        rendererSettings,
-        "LibGDX Color",
+class LibGDXColorObjectRenderer: CompoundReferenceRenderer(
+        NodeRendererSettings.getInstance() ?: NodeRendererSettings(),
+        "libGDX Color",
         null,
         null
 ) {
@@ -41,7 +40,11 @@ class LibGDXColorObjectRenderer(rendererSettings: NodeRendererSettings): Compoun
     isEnabled = true
   }
 
-  override fun calcValueIcon(descriptor: ValueDescriptor?, evaluationContext: EvaluationContext?, listener: DescriptorLabelListener?): Icon? {
+  override fun calcValueIcon(
+          descriptor: ValueDescriptor?,
+          evaluationContext: EvaluationContext?,
+          listener: DescriptorLabelListener?
+  ): Icon? {
 
     val value = descriptor?.value as? ObjectReference ?: return null
 

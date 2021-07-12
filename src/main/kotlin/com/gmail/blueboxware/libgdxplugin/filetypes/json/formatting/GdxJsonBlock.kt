@@ -35,7 +35,11 @@ class GdxJsonBlock(
 
   private val psiElement: PsiElement = node.psi
 
-  private val childWrap: Wrap?
+  private val childWrap: Wrap? = when (psiElement) {
+    is GdxJsonJobject -> Wrap.createWrap(customSettings.OBJECT_WRAPPING, true)
+    is GdxJsonArray -> Wrap.createWrap(customSettings.ARRAY_WRAPPING, true)
+    else -> null
+  }
 
   private val propertyValueAlignment: Alignment? = if (psiElement is GdxJsonJobject) {
     Alignment.createAlignment(true)
@@ -44,16 +48,6 @@ class GdxJsonBlock(
   }
 
   private var subBlocks: MutableList<Block>? = null
-
-  init {
-    childWrap = if (psiElement is GdxJsonJobject) {
-      Wrap.createWrap(customSettings.OBJECT_WRAPPING, true)
-    } else if (psiElement is GdxJsonArray) {
-      Wrap.createWrap(customSettings.ARRAY_WRAPPING, true)
-    } else {
-      null
-    }
-  }
 
   override fun getNode(): ASTNode = node
 
@@ -65,30 +59,27 @@ class GdxJsonBlock(
 
   override fun getAlignment(): Alignment? = alignment
 
-  override fun isLeaf(): Boolean = node.firstChildNode == null
+  override fun isLeaf(): Boolean =
+          node.firstChildNode == null
 
-  override fun getSpacing(child1: Block?, child2: Block): Spacing? = spacingBuilder.getSpacing(this, child1, child2)
+  override fun getSpacing(child1: Block?, child2: Block): Spacing? =
+          spacingBuilder.getSpacing(this, child1, child2)
 
   override fun isIncomplete(): Boolean =
           node.lastChildNode?.let { lastChild ->
-            if (node.elementType == JOBJECT) {
-              lastChild.elementType != R_CURLY
-            } else if (node.elementType == ARRAY) {
-              lastChild.elementType != R_BRACKET
-            } else if (node.elementType == PROPERTY) {
-              (node.psi as? GdxJsonProperty)?.value == null
-            } else {
-              false
+            when (node.elementType) {
+              JOBJECT -> lastChild.elementType != R_CURLY
+              ARRAY -> lastChild.elementType != R_BRACKET
+              PROPERTY -> (node.psi as? GdxJsonProperty)?.value == null
+              else -> false
             }
           } ?: false
 
   override fun getChildAttributes(newChildIndex: Int): ChildAttributes =
-          if (node.elementType in CONTAINERS) {
-            ChildAttributes(Indent.getNormalIndent(), null)
-          } else if (node.psi is PsiFile) {
-            ChildAttributes(Indent.getNoneIndent(), null)
-          } else {
-            ChildAttributes(null, null)
+          when {
+            node.elementType in CONTAINERS -> ChildAttributes(Indent.getNormalIndent(), null)
+            node.psi is PsiFile -> ChildAttributes(Indent.getNoneIndent(), null)
+            else -> ChildAttributes(null, null)
           }
 
   override fun getSubBlocks(): List<Block> {
@@ -143,9 +134,9 @@ class GdxJsonBlock(
 
   companion object {
 
-    val OPEN_BRACES = TokenSet.create(L_CURLY, L_BRACKET)
-    val CLOSE_BRACES = TokenSet.create(R_CURLY, R_BRACKET)
-    val BRACES = TokenSet.orSet(OPEN_BRACES, CLOSE_BRACES)
+    private val OPEN_BRACES = TokenSet.create(L_CURLY, L_BRACKET)
+    private val CLOSE_BRACES = TokenSet.create(R_CURLY, R_BRACKET)
+    private val BRACES = TokenSet.orSet(OPEN_BRACES, CLOSE_BRACES)
 
     private fun isWhiteSpaceOrEmpty(node: ASTNode) =
             node.elementType == TokenType.WHITE_SPACE || node.textLength == 0

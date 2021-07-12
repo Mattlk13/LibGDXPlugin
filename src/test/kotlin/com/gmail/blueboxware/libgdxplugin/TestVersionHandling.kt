@@ -32,6 +32,7 @@ import java.io.File
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@Suppress("ReplaceNotNullAssertionWithElvisReturn")
 class TestVersionHandling: LibGDXCodeInsightFixtureTestCase() {
 
   fun testExtractVersionsFromMavenMetaData1() {
@@ -40,6 +41,10 @@ class TestVersionHandling: LibGDXCodeInsightFixtureTestCase() {
 
   fun testExtractVersionsFromMavenMetaData2() {
     doTestExtractVersionsFromMavenMetaData("kotlin")
+  }
+
+  fun testExtractVersionsFromMavenMetaData3() {
+    doTestExtractVersionsFromMavenMetaData("autumn")
   }
 
   fun testGradleBuildScriptVersionDetection() {
@@ -98,7 +103,7 @@ class TestVersionHandling: LibGDXCodeInsightFixtureTestCase() {
 
   private fun doTestExtractVersionsFromMavenMetaData(fileName: String) {
     val file = File("src/test/testdata/versions/$fileName.xml")
-    val versions = Library.extractVersionsFromMavenMetaData(file.inputStream())
+    val versions = Library.extractVersionsFromMavenMetaData(file.readText())
     assertNotNull(versions)
     versions?.let { foundVersions ->
       val expectedVersions = Regex("""<version>([^<]*)</version>""").findAll(file.inputStream().reader().readText())

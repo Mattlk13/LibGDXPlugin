@@ -28,7 +28,12 @@ abstract class ManifestVisitor: XmlRecursiveElementVisitor() {
   abstract fun processTargetSDKVersion(value: Int, element: XmlAttribute)
   abstract fun processMaxSDKVersion(value: Int, element: XmlAttribute)
 
-  abstract fun processSupportsScreens(value: SupportsScreens, element: XmlTag, hasLargeScreensSupportAttribute: Boolean, hasXLargeScreensSupportAttribute: Boolean)
+  abstract fun processSupportsScreens(
+          value: SupportsScreens,
+          element: XmlTag,
+          hasLargeScreensSupportAttribute: Boolean,
+          hasXLargeScreensSupportAttribute: Boolean
+  )
 
   abstract fun processPermission(value: String, element: XmlTag)
 
@@ -37,9 +42,7 @@ abstract class ManifestVisitor: XmlRecursiveElementVisitor() {
     if (tag?.name == "uses-feature" && tag.parentTag?.name == "manifest") {
       tag.getAttribute("android:glEsVersion")?.value?.let { value ->
         try {
-          Integer.decode(value)?.let {
-            processOpenGLESVersion(it, tag)
-          }
+          processOpenGLESVersion(Integer.decode(value), tag)
         } catch (e: NumberFormatException) {
           // Nothing
         }

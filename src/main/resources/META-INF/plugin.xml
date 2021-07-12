@@ -16,12 +16,13 @@
 <!--suppress XmlUnboundNsPrefix -->
 <idea-plugin>
     <id>com.gmail.blueboxware.libgdxplugin</id>
-    <name>LibGDX Plugin</name>
-    <version>1.20.1</version>
+    <!--suppress PluginXmlCapitalization -->
+    <name>libGDX</name>
+    <version>1.23.2</version>
     <vendor url="https://github.com/BlueBoxWare/LibGDXPlugin">Blue Box Ware</vendor>
 
     <description><![CDATA[
-      This unofficial plugin adds a number of LibGDX related features to IntelliJ and Android Studio.
+      This unofficial plugin adds a number of libGDX related features to IntelliJ and Android Studio.
         <br/><br/>
       This plugin needs a recent version of the official Kotlin plugin to be installed (even if you don't use Kotlin), so please install and/or enable that plugin first.
         <br/><br/>
@@ -30,282 +31,161 @@
     ]]></description>
 
     <change-notes><![CDATA[
-
-        <b>1.20.1</b>
         <ul>
-            <li>
-                Fix NPE when running with IntelliJ 2019.2 EAP.
-            </li>
+            <li>Fix IllegalAccessError with IntelliJ 2021.1.*.</li>
         </ul>
-
-        <b>1.20</b>
-        <ul>
-            <li>
-               Skin files now use the standard IntelliJ method of suppressing warnings, with <i>//noinspection</i> comments.
-            </li>
-            <li>
-                LibGDX JSON: allow suppression of warnings.
-            </li>
-            <li>
-                Skin files & LibGDX JSON: spell checking.
-            </li>
-            <li>
-                Skin files & LibGDX JSON: <a href="https://www.jetbrains.com/help/idea/settings-editor-breadcrumbs.html">breadcrumbs</a>.
-            </li>
-            <li>
-                LibGDX JSON: move array element foward/backward intentions.
-            </li>
-        </ul>
-
-        <b>1.19</b>
-        <ul>
-            <li>
-                Support for LibGDX style JSON (<a href="https://github.com/BlueBoxWare/LibGDXPlugin/issues/19">#19</a>).
-                In the project panel context menu use <i>Mark as LibGDX style JSON</i> to have a file treated as LibGDX JSON.
-            </li>
-        </ul>
-
-        <b>1.18</b>
-        <ul>
-            <li>Support for com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator in Skin files (<a href="https://github.com/BlueBoxWare/LibGDXPlugin/issues/18">issue #18</a>)</li>
-            <li>Minor fixes</li>
-        </ul>
-
-        <b>1.17.2</b>
-        <ul>
-            <li>Fix issue https://github.com/BlueBoxWare/LibGDXPlugin/issues/17</li>
-        </ul>
-
-        <b>1.17.1</b>
-        <ul>
-            <li>Fix issues with IntelliJ 2018.3 EAP</li>
-        </ul>
-
-        <b>1.17</b>
-        <ul>
-            <li>Support for com.badlogic.gdx.graphics.Colors</li>
-            <li>Find Usages for tags in @GDXTag annotation</li>
-            <li>Unused tag inspection for @GDXTag annotation</li>
-            <li>Show color previews in decompiled classes too</li>
-            <li>Always show completion popup when there is something useful to show</li>
-            <li>Miscellaneous small improvements</li>
-        </ul>
-
-        <b>1.16.1</b>
-        <ul>
-            <li>Fix non existing resource inspection: it should only look at annotated elements</li>
-        </ul>
-
-        <b>1.16</b>
-        <ul>
-            <li>Inspection to highlight references in Java/Kotlin to resources which don't exist. @GDXAssets annotated fields and variables only.</li>
-            <li>Warn about outdated libraries in Gradle Kotlin DSL too</li>
-            <li>Performance improvements</li>
-            <li>Skins: Inspection to inform about the ability to use short class names instead of qualified names when using LibGDX >= 1.9.9</li>
-            <li>Skins: Inspection to highlight usage of deprecated classes and fields</li>
-            <li>Skins: Quickfix to create resources which don't exist</li>
-            <li>Skins: Use the @GDXTag annotation to inform the plugin about custom short names for classes</li>
-            <li>Skins: Intentions to convert color resources to hex or to float components</li>
-            <li>Skins: Create new color wizard (<i>Code</i> -> <i>Generate</i> or <i>Alt-Insert</i>, <i>Command-N</i>)</li>
-        </ul>
-
-        <b>1.15.2</b>
-        <ul>
-            <li>Fix Settings pane (<a href="https://github.com/BlueBoxWare/LibGDXPlugin/issues/14">https://github.com/BlueBoxWare/LibGDXPlugin/issues/14</a>)</li>
-            <li>Add setting to enable/disable color previews in Skins</li>
-        </ul>
-
-        <b>1.15.1</b>
-        <ul>
-            <li>Don't crash on 'invalid' color values (<a href="https://github.com/BlueBoxWare/LibGDXPlugin/issues/13">https://github.com/BlueBoxWare/LibGDXPlugin/issues/13</a>)</li>
-            <li>Skins: don't treat parent property as special when using a LibGDX version below 1.9.9 </li>
-        </ul>
-
-        <b>1.15</b>
-        <ul>
-            <li>Skins: support tagged classes and cascading styles (LibGDX 1.9.9, <a href="https://github.com/BlueBoxWare/LibGDXPlugin/issues/12">https://github.com/BlueBoxWare/LibGDXPlugin/issues/12</a>)</li>
-            <li>Minor fixes and improvements</li>
-        </ul>
-
-        <b>1.14</b>
-        <ul>
-            <li>Warning when @GDXAsset annotation is used on an invalid target</li>
-            <li>@GDXAsset related functionality now works correctly with array literals in the annotation (available since Kotlin 1.2)</li>
-            <li>Minor fixes</li>
-        </ul>
-
-        <b>1.13</b>
-        <ul>
-            <li>Completion for I18NBundle.get() and I18NBundle.format() arguments</li>
-            <li>Improved Go to definition, Find Usages and renaming support for .properties keys</li>
-            <li>Invalid property key inspection for I18NBundle.get() and I18NBundle.format()</li>
-        </ul>
-
-        <b>1.12</b>
-        <ul>
-            <li>New inspection: missing WRITE_EXTERNAL_STORAGE permission</li>
-            <li>Skin files: improved autocompletion, refactoring support and string handling</li>
-            <li>Bugfixes</li>
-        </ul>
-
-        <b>1.11</b>
-        <ul>
-            <li>
-                Skin files:
-                <ul>
-                    <li>Allow suppression of warnings for specific objects or entire file</li>
-                    <li>Added quickfixes to suppress warnings</li>
-                    <li>Added a number of inspections</li>
-                    <li>Smart closing quotes insertion and removal</li>
-                    <li>Bugfixes</li>
-                </ul>
-            </li>
-            <li>Previews for Textures/Drawables: with SHIFT pressed, hover over a region in an Atlas files, a Drawable name in a Skin file or Drawable name in Skin methods of a properly annotated Skin object</li>
-            <li>Color previews in the debug view</li>
-        </ul>
-
-        <b>1.10</b>
-        <ul>
-            <li>Proper support for arrays and nested objects in Skin files</li>
-            <li>Fixed Structure View not updating when changing files</li>
-        </ul>
-
-        <b>1.9</b>
-        <ul>
-            <li>Support for Completion, Go to Definition and Find Usages of resources from Skin files and Atlas files in Java and Kotlin code. Use the @LibGDXAssets annotation to specify the files to use. See the <a href="https://github.com/BlueBoxWare/LibGDXPlugin/blob/master/README.md">README</a> for usage instructions.</li>
-            <li>Atlas files: allow spaces in region names</li>
-            <li>Misc. bug fixes</li>
-        </ul>
-
-        <b>1.8</b>
-        <ul>
-            <li>Syntax Highlighting and Structure View for .fnt files</li>
-            <li>Use Maven Central instead of GitHub to determine latest versions of libraries. Respect proxy settings, if any.</li>
-            <li>Add versions checks for more libraries. The following libraries are now checked: Ashley, Autumn, Autumn MVC, Box2d, Box2dLights, Gdx AI, GDX Bullet, GDX Controllers, GDX FreeType, gdx-dialogs, gdx-facebook, gdx-lml, gdx-lml-vis, Gdx-Pay, Kiwi, KTX actors, KTX app, KTX assets, KTX collections, KTX i18n, KTX inject, KTX log, KTX math, KTX scene2d, KTX style, KTX vis, KTX vis-style, LibGDX, libgdx-utils, libgdx-utils-box2d, Overlap2D, Vis Runtime, VisUI, Web Sockets, Web Sockets Serialization</li>
-            <li>Several fixes in the handling of Skin files, show color previews everywhere and use Ctrl-B to jump between definitions and usages of Tinted Drawables</li>
-        </ul>
-
-        <b>1.7</b>
-        <ul>
-            <li>Skin files:
-                <ul>
-                    <li>Fix Find Usages for resource names</li>
-                    <li>Ctrl-B on a class name: jump to class source</li>
-                    <li>Ctrl-B on a property name: jump to field source</li>
-                    <li>Ctrl-B on a bitmap font name: jump to font file</li>
-                    <li>Renaming a resource with Shift-F6 also renames usages of that resource in the Skin file</li>
-                    <li>Click on a color preview to open a color selection dialog</li>
-                    <li>Inspections for Skin files: warnings about using classes or fields which do not exist and about malformed color strings</li>
-                </ul>
-            </li>
-            <li>Syntax Highlighting, Structure View and Folding for <i>.atlas/.pack</i> files</li>
-        </ul>
-
-        <b>1.6</b>
-        <ul>
-            <li>Skin files:
-                <ul>
-                    <li>Fix auto indentation</li>
-                    <li>Goto Definition/Find Usages for resource names in Skin files</li>
-                    <li>Refactoring: support for renaming resources</li>
-                </ul>
-            </li>
-        </ul>
-
-        <b>1.5</b>
-        <ul>
-        <li>Skin files:
-            <ul>
-                <li>Code completion (classnames, resource names, property names, etc)</li>
-                <li>Structure view</li>
-                <li>Configure the code style and formatting for Skin files with <i>Settings -> Editor -> Code Style -> LibGDX</i> and apply it to existing code with <i>Code -> Reformat Code</i></li>
-                <li>Brace matching</li>
-            </ul>
-        </li>
-        </ul>
-
-        <b>1.4</b>
-        <ul>
-            <li>Fixed several issues with Skin files</li>
-            <li>Code folding for Skin files</li>
-        </ul>
-    ]]>
+        ]]>
     </change-notes>
 
-    <idea-version since-build="183"/>
+    <idea-version since-build="202.7660.26"/>
 
     <depends>com.intellij.modules.java</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.intellij.groovy</depends>
     <depends>com.intellij.properties</depends>
+    <depends>com.intellij.modules.platform</depends>
+
+    <applicationListeners>
+        <listener class="com.gmail.blueboxware.libgdxplugin.versions.ProjectOpenCloseListener"
+                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    </applicationListeners>
+
+    <projectListeners>
+        <listener class="com.gmail.blueboxware.libgdxplugin.GwtOutdatedListener"
+                  topic="com.intellij.openapi.vfs.newvfs.BulkFileListener" />
+    </projectListeners>
 
     <extensions defaultExtensionNs="com.intellij">
-        <inspectionToolProvider
-                implementation="com.gmail.blueboxware.libgdxplugin.inspections.LibGDXInspectionToolProvider" />
 
-        <internalFileTemplate name="LibGDX Screen (Java)"/>
-        <internalFileTemplate name="LibGDX Screen (Kotlin)"/>
+        <postStartupActivity implementation="com.gmail.blueboxware.libgdxplugin.LibGDXStartupActivity"/>
 
-        <annotator language="kotlin" implementationClass="com.gmail.blueboxware.libgdxplugin.annotators.ColorAnnotator" />
-        <annotator language="JAVA" implementationClass="com.gmail.blueboxware.libgdxplugin.annotators.ColorAnnotator" />
+        <internalFileTemplate name="libGDX Screen (Java)"/>
+        <internalFileTemplate name="libGDX Screen (Kotlin)"/>
 
+        <annotator language="kotlin"
+                   implementationClass="com.gmail.blueboxware.libgdxplugin.annotators.ColorAnnotator"/>
+        <annotator language="JAVA" implementationClass="com.gmail.blueboxware.libgdxplugin.annotators.ColorAnnotator"/>
+        <highlightingPassFactory
+                implementation="com.gmail.blueboxware.libgdxplugin.annotators.ColorAnnotationsHighlightingPassFactory"/>
+
+        <!--suppress PluginXmlCapitalization -->
         <projectConfigurable
                 instance="com.gmail.blueboxware.libgdxplugin.settings.LibGDXPluginConfigurable"
-                displayName="LibGDXPlugin"
+                displayName="libGDXPlugin"
                 id="com.gmail.blueboxware.libgdxplugin.libgdxpluginconfigurable"
                 groupId="editor"
-                />
+        />
         <projectService
-                serviceInterface="com.gmail.blueboxware.libgdxplugin.settings.LibGDXPluginSettings"
                 serviceImplementation="com.gmail.blueboxware.libgdxplugin.settings.LibGDXPluginSettings"
-                />
+        />
 
-        <iconProvider implementation="com.gmail.blueboxware.libgdxplugin.ui.LibGDXIconProvider" />
+        <iconProvider implementation="com.gmail.blueboxware.libgdxplugin.ui.LibGDXIconProvider"/>
 
-        <previewHintProvider implementation="com.gmail.blueboxware.libgdxplugin.ui.TextureRegionPreviewHintProvider" />
+        <previewHintProvider implementation="com.gmail.blueboxware.libgdxplugin.ui.TextureRegionPreviewHintProvider"/>
 
-        <debugger.nodeRenderer implementation="com.gmail.blueboxware.libgdxplugin.ui.LibGDXColorObjectRenderer" />
+        <debugger.nodeRenderer implementation="com.gmail.blueboxware.libgdxplugin.ui.LibGDXColorObjectRenderer"/>
 
-        <elementDescriptionProvider implementation="com.gmail.blueboxware.libgdxplugin.ui.LibGDXElementDescriptionProvider" />
+        <elementDescriptionProvider
+                implementation="com.gmail.blueboxware.libgdxplugin.ui.LibGDXElementDescriptionProvider"/>
 
-        <completion.confidence language="JAVA" implementationClass="com.gmail.blueboxware.libgdxplugin.completion.LibGDXCompletionConfidence" order="before javaSkipAutopopupInStrings" />
-        <completion.confidence language="kotlin" implementationClass="com.gmail.blueboxware.libgdxplugin.completion.LibGDXCompletionConfidence" order="first" />
+        <completion.confidence language="JAVA"
+                               implementationClass="com.gmail.blueboxware.libgdxplugin.completion.LibGDXCompletionConfidence"
+                               order="before javaSkipAutopopupInStrings"/>
+        <completion.confidence language="kotlin"
+                               implementationClass="com.gmail.blueboxware.libgdxplugin.completion.LibGDXCompletionConfidence"
+                               order="first"/>
 
-        <usageTargetProvider implementation="com.gmail.blueboxware.libgdxplugin.references.LibGDXTagUsageTargetProvider" />
-        <findUsagesHandlerFactory implementation="com.gmail.blueboxware.libgdxplugin.references.ColorsFindUsagesHandlerFactory" />
+        <usageTargetProvider
+                implementation="com.gmail.blueboxware.libgdxplugin.references.LibGDXTagUsageTargetProvider"/>
+        <findUsagesHandlerFactory
+                implementation="com.gmail.blueboxware.libgdxplugin.references.ColorsFindUsagesHandlerFactory"/>
 
-        <!--LibGDX JSON files-->
-        <fileTypeFactory implementation="com.gmail.blueboxware.libgdxplugin.filetypes.json.LibGDXJsonFileTypeFactory" id="LibGDXJson" />
+        <!--suppress PluginXmlCapitalization -->
+        <globalInspection
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.global.DesignedForTabletsInspection"
+                bundle="libgdxplugin"
+                key="designed.for.tablets.inspection"
+                groupPath="libGDX"
+                groupName="Android"
+                shortName="LibGDXDesignedForTablets"
+        />
 
-        <lang.parserDefinition language="LibGDXJson" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.GdxJsonParserDefinition" />
+        <!--suppress PluginXmlCapitalization -->
+        <globalInspection
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.global.OutdatedVersionsInspection"
+                bundle="libgdxplugin"
+                key="outdated.version.inspection.display.name"
+                groupPath="libGDX"
+                groupName="General"
+                shortName="LibGDXOutdatedVersion"
+        />
 
-        <lang.substitutor implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.LibGDXGdxJsonFileSubstitutor" language="JSON"/>
-        <lang.substitutor implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.LibGDXGdxJsonFileSubstitutor" language="TEXT"/>
+        <!--libGDX JSON files-->
+        <fileType
+                name="libGDX JSON"
+                language="LibGDXJson"
+                extensions="lson"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.LibGDXJsonFileType"
+                fieldName="INSTANCE"
+                id="LibGDXJson"
+        />
 
-        <editorNotificationProvider implementation="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonEditorNotificationProvider" />
+        <lang.parserDefinition language="LibGDXJson"
+                               implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.GdxJsonParserDefinition"/>
 
-        <lang.syntaxHighlighterFactory language="LibGDXJson" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonSyntaxHighlighterFactory" />
-        <annotator language="LibGDXJson" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.annotators.GdxJsonHighlightingAnnotator" />
-        <annotator language="LibGDXJson" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.annotators.GdxJsonColorAnnotator" />
+        <lang.substitutor
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.LibGDXGdxJsonFileSubstitutor"
+                language="JSON"/>
+        <lang.substitutor
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.LibGDXGdxJsonFileSubstitutor"
+                language="TEXT"/>
 
-        <basicWordSelectionFilter implementation="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonWordSelectionFilter" />
-        <lang.braceMatcher language="LibGDXJson" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonBraceMatcher" />
-        <lang.commenter language="LibGDXJson" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonCommenter" />
+        <editorNotificationProvider
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonEditorNotificationProvider"/>
 
-        <lang.formatter language="LibGDXJson" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.formatting.GdxJsonFormattingBuilderModel" />
+        <lang.syntaxHighlighterFactory language="LibGDXJson"
+                                       implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonSyntaxHighlighterFactory"/>
+        <annotator language="LibGDXJson"
+                   implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.annotators.GdxJsonHighlightingAnnotator"/>
+        <annotator language="LibGDXJson"
+                   implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.annotators.GdxJsonColorAnnotator"/>
+        <annotator language="LibGDXJson"
+                   implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.annotators.GdxJsonErrorAnnotator" />
 
-        <lang.foldingBuilder language="LibGDXJson" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonFoldingBuilder" />
+        <basicWordSelectionFilter
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonWordSelectionFilter"/>
+        <lang.braceMatcher language="LibGDXJson"
+                           implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonBraceMatcher"/>
+        <lang.commenter language="LibGDXJson"
+                        implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonCommenter"/>
 
-        <lang.smartEnterProcessor language="LibGDXJson" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonSmartEnterProcessor" />
-        <quoteHandler fileType="LibGDX JSON" className="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonQuoteHandler" />
+        <lang.formatter language="LibGDXJson"
+                        implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.formatting.GdxJsonFormattingBuilderModel"/>
 
-        <completion.contributor language="LibGDXJson" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonCompletionContributor" />
+        <lang.foldingBuilder language="LibGDXJson"
+                             implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonFoldingBuilder"/>
 
-        <lang.psiStructureViewFactory language="LibGDXJson" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.structureView.GdxJsonStructureViewBuilderFactory" />
+        <lang.smartEnterProcessor language="LibGDXJson"
+                                  implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonSmartEnterProcessor"/>
+        <quoteHandler fileType="libGDX JSON"
+                      className="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonQuoteHandler"/>
 
-        <breadcrumbsInfoProvider implementation="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonBreadcrumbsProvider" />
+        <completion.contributor language="LibGDXJson"
+                                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonCompletionContributor"/>
 
-        <spellchecker.support language="LibGDXJson" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonSpellcheckerStrategy" />
+        <lang.psiStructureViewFactory language="LibGDXJson"
+                                      implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.structureView.GdxJsonStructureViewBuilderFactory"/>
+
+        <lang.findUsagesProvider language="LibGDXJson"
+                                 implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.references.GdxJsonFindUsagesProvider" />
+
+        <breadcrumbsInfoProvider
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonBreadcrumbsProvider"/>
+
+        <spellchecker.support language="LibGDXJson"
+                              implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonSpellcheckerStrategy"/>
+
+        <json.jsonWidgetSuppressor implementation="com.gmail.blueboxware.libgdxplugin.filetypes.json.editor.GdxJsonSchemaWidgetSuppressor" />
 
         <intentionAction>
             <className>com.gmail.blueboxware.libgdxplugin.filetypes.json.intentions.GdxJsonAddQuotesIntention</className>
@@ -324,63 +204,110 @@
         </intentionAction>
 
         <!--Skin files-->
-        <annotator language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.highlighting.SkinAdditionalHighlighter" />
-        <annotator language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.annotators.SkinColorAnnotator" />
-        <annotator language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.annotators.SkinErrorsAnnotator" />
+        <annotator language="LibGDXSkin"
+                   implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.highlighting.SkinAdditionalHighlighter"/>
+        <annotator language="LibGDXSkin"
+                   implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.annotators.SkinColorAnnotator"/>
+        <annotator language="LibGDXSkin"
+                   implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.annotators.SkinErrorsAnnotator"/>
 
-        <fileTypeFactory implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.LibGDXSkinFileTypeFactory" id="LibGDXSkin" />
+        <fileType
+                name="libGDX Skin"
+                language="LibGDXSkin"
+                id="LibGDXSkin"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.LibGDXSkinFileType"
+                fieldName="INSTANCE"
+                extensions="skin"
+        />
 
-        <editorNotificationProvider implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinEditorNotificationProvider" order="first"/>
+        <editorNotificationProvider
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinEditorNotificationProvider"
+                order="first"/>
 
-        <lang.substitutor implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.LibGDXSkinFileSubstitutor" language="JSON"/>
-        <lang.substitutor implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.LibGDXSkinFileSubstitutor" language="TEXT"/>
-        <lang.substitutor implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.LibGDXSkinFileSubstitutor" language="LibGDXJson"/>
+        <lang.substitutor
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.LibGDXSkinFileSubstitutor"
+                language="JSON"/>
+        <lang.substitutor
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.LibGDXSkinFileSubstitutor"
+                language="TEXT"/>
+        <lang.substitutor
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.LibGDXSkinFileSubstitutor"
+                language="LibGDXJson"/>
 
-        <lang.parserDefinition language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.SkinParserDefinition" />
+        <lang.parserDefinition language="LibGDXSkin"
+                               implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.SkinParserDefinition"/>
 
-        <lang.syntaxHighlighterFactory language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.highlighting.SkinSyntaxHighlighterFactory" />
-        <colorSettingsPage implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.highlighting.LibGDXSkinColorsPage" />
+        <lang.syntaxHighlighterFactory language="LibGDXSkin"
+                                       implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.highlighting.SkinSyntaxHighlighterFactory"/>
+        <colorSettingsPage
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.highlighting.LibGDXSkinColorsPage"/>
 
-        <lang.foldingBuilder language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinFoldingBuilder" />
+        <lang.foldingBuilder language="LibGDXSkin"
+                             implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinFoldingBuilder"/>
 
-        <completion.contributor language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinCompletionContributor" />
+        <completion.contributor language="LibGDXSkin"
+                                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinCompletionContributor"/>
 
-        <lang.commenter language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinCommenter" />
+        <lang.commenter language="LibGDXSkin"
+                        implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinCommenter"/>
 
-        <lang.psiStructureViewFactory language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.structureView.SkinStructureViewFactory" />
-        <psi.treeChangePreprocessor implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.structureView.SkinTreeChangePreprocessor" />
+        <lang.psiStructureViewFactory language="LibGDXSkin"
+                                      implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.structureView.SkinStructureViewFactory"/>
+        <psi.treeChangePreprocessor
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.structureView.SkinTreeChangePreprocessor"/>
 
-        <lang.braceMatcher language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinBraceMatcher" />
-        <quoteHandler fileType="LibGDX Skin" className="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinQuoteHandler" />
+        <lang.braceMatcher language="LibGDXSkin"
+                           implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinBraceMatcher"/>
+        <quoteHandler fileType="libGDX Skin"
+                      className="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinQuoteHandler"/>
 
-        <lang.smartEnterProcessor language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinSmartEnterProcessor" />
+        <lang.smartEnterProcessor language="LibGDXSkin"
+                                  implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinSmartEnterProcessor"/>
 
-        <lang.formatter language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.formatter.SkinFormattingBuilderModel" />
+        <lang.formatter language="LibGDXSkin"
+                        implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.formatter.SkinFormattingBuilderModel"/>
 
-        <codeStyleSettingsProvider implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.formatter.SkinCodeStyleSettingsProvider" />
-        <langCodeStyleSettingsProvider implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.formatter.SkinLanguageCodeStyleSettingsProvider" />
+        <codeStyleSettingsProvider
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.formatter.SkinCodeStyleSettingsProvider"/>
+        <langCodeStyleSettingsProvider
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.formatter.SkinLanguageCodeStyleSettingsProvider"/>
 
-        <lang.refactoringSupport language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.refactoring.SkinRefactoringSupportProvider" />
-        <refactoring.elementListenerProvider implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.refactoring.SkinRefactoringElementListenerProvider" />
-        <refactoring.elementListenerProvider implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.refactoring.ChangeKotlinPackageListener" />
+        <lang.refactoringSupport language="LibGDXSkin"
+                                 implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.refactoring.SkinRefactoringSupportProvider"/>
+        <refactoring.elementListenerProvider
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.refactoring.SkinRefactoringElementListenerProvider"/>
+        <refactoring.elementListenerProvider
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.refactoring.ChangeKotlinPackageListener"/>
 
-        <lang.findUsagesProvider language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.findUsages.SkinFindUsagesProvider" />
+        <lang.findUsagesProvider language="LibGDXSkin"
+                                 implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.findUsages.SkinFindUsagesProvider"/>
 
-        <psi.referenceContributor language="JAVA" implementation="com.gmail.blueboxware.libgdxplugin.references.ColorsReferenceContributor" />
-        <psi.referenceContributor language="kotlin" implementation="com.gmail.blueboxware.libgdxplugin.references.ColorsReferenceContributor" />
+        <psi.referenceContributor language="JAVA"
+                                  implementation="com.gmail.blueboxware.libgdxplugin.references.ColorsReferenceContributor"/>
+        <psi.referenceContributor language="kotlin"
+                                  implementation="com.gmail.blueboxware.libgdxplugin.references.ColorsReferenceContributor"/>
 
-        <psi.referenceContributor language="JAVA" implementation="com.gmail.blueboxware.libgdxplugin.references.JavaReferenceContributor" />
-        <psi.referenceContributor language="kotlin" implementation="com.gmail.blueboxware.libgdxplugin.references.KotlinReferenceContributor" />
-        <useScopeEnlarger implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.findUsages.ClassUseScopeEnlarger" />
-        <referencesSearch implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.findUsages.TaggedClassUsagesSearcher" />
+        <psi.referenceContributor language="JAVA"
+                                  implementation="com.gmail.blueboxware.libgdxplugin.references.JavaReferenceContributor"/>
+        <psi.referenceContributor language="kotlin"
+                                  implementation="com.gmail.blueboxware.libgdxplugin.references.KotlinReferenceContributor"/>
+        <useScopeEnlarger
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.findUsages.ClassUseScopeEnlarger"/>
+        <referencesSearch
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.findUsages.TaggedClassUsagesSearcher"/>
 
-        <implicitUsageProvider implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.findUsages.TaggedClassImplicitUsageProvider" />
-        <usageTypeProvider implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.findUsages.SkinUsageTypeProvider" />
-        <findUsagesHandlerFactory implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.findUsages.ClassTagFindUsagesHandlerFactory" />
+        <implicitUsageProvider
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.findUsages.TaggedClassImplicitUsageProvider"/>
+        <usageTypeProvider
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.findUsages.SkinUsageTypeProvider"/>
+        <findUsagesHandlerFactory
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.findUsages.ClassTagFindUsagesHandlerFactory"/>
 
-        <breadcrumbsInfoProvider implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinBreadcrumbsProvider" />
+        <breadcrumbsInfoProvider
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinBreadcrumbsProvider"/>
 
-        <spellchecker.support language="LibGDXSkin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinSpellcheckerStrategy" />
+        <spellchecker.support language="LibGDXSkin"
+                              implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.editor.SkinSpellcheckerStrategy"/>
 
         <intentionAction>
             <className>com.gmail.blueboxware.libgdxplugin.filetypes.skin.intentions.ColorToComponentsIntention</className>
@@ -394,86 +321,720 @@
         </intentionAction>
 
         <!--Atlas files-->
-        <fileTypeFactory implementation="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.LibGDXAtlasFileTypeFactory" id="LibGDXAtlas" />
+        <fileType
+                name="libGDX Atlas"
+                extensions="atlas;pack"
+                language="LibGDXAtlas"
+                fieldName="INSTANCE"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.LibGDXAtlasFileType"
+                id="LibGDXAtlas"
+        />
 
-        <lang.parserDefinition language="LibGDXAtlas" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.AtlasParserDefinition" />
+        <lang.parserDefinition language="LibGDXAtlas"
+                               implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.AtlasParserDefinition"/>
 
-        <lang.syntaxHighlighterFactory language="LibGDXAtlas" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.highlighting.AtlasSyntaxHighlighterFactory" />
-        <colorSettingsPage implementation="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.highlighting.AtlasColorSettingsPage" />
-        <annotator language="LibGDXAtlas" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.highlighting.AtlasAdditionalHighlighter" />
+        <lang.syntaxHighlighterFactory language="LibGDXAtlas"
+                                       implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.highlighting.AtlasSyntaxHighlighterFactory"/>
+        <colorSettingsPage
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.highlighting.AtlasColorSettingsPage"/>
+        <annotator language="LibGDXAtlas"
+                   implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.highlighting.AtlasAdditionalHighlighter"/>
 
-        <lang.psiStructureViewFactory language="LibGDXAtlas" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.structureView.AtlasStructureViewFactory" />
-        <psi.treeChangePreprocessor implementation="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.structureView.AtlasTreeChangePreprocessor" />
+        <lang.psiStructureViewFactory language="LibGDXAtlas"
+                                      implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.structureView.AtlasStructureViewFactory"/>
+        <psi.treeChangePreprocessor
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.structureView.AtlasTreeChangePreprocessor"/>
 
-        <lang.foldingBuilder language="LibGDXAtlas" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.editor.AtlasFoldingBuilder" />
+        <lang.foldingBuilder language="LibGDXAtlas"
+                             implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.editor.AtlasFoldingBuilder"/>
 
-        <lang.findUsagesProvider language="LibGDXAtlas" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.editor.AtlasFindUsagesProvider" />
+        <lang.findUsagesProvider language="LibGDXAtlas"
+                                 implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.atlas.editor.AtlasFindUsagesProvider"/>
 
         <!--Font files-->
-        <fileTypeFactory implementation="com.gmail.blueboxware.libgdxplugin.filetypes.bitmapFont.BitmapFontFileTypeFactory" id="LibGDXBitmapFont" />
+        <fileType
+                name="libGDX Bitmap Font"
+                language="LibGDXBitmapFont"
+                id="LibGDXBitmapFont"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.bitmapFont.BitmapFontFileType"
+                fieldName="INSTANCE"
+                extensions="fnt"
+        />
 
-        <lang.parserDefinition language="LibGDXBitmapFont" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.bitmapFont.BitmapFontParserDefinition" />
+        <lang.parserDefinition language="LibGDXBitmapFont"
+                               implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.bitmapFont.BitmapFontParserDefinition"/>
 
-        <colorSettingsPage implementation="com.gmail.blueboxware.libgdxplugin.filetypes.bitmapFont.highlighting.BitmapFontColorSettingsPage" />
-        <annotator language="LibGDXBitmapFont" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.bitmapFont.highlighting.BitmapFontHighlighter" />
+        <colorSettingsPage
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.bitmapFont.highlighting.BitmapFontColorSettingsPage"/>
+        <annotator language="LibGDXBitmapFont"
+                   implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.bitmapFont.highlighting.BitmapFontHighlighter"/>
 
-        <lang.psiStructureViewFactory language="LibGDXBitmapFont" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.bitmapFont.structureView.BitmapFontStructureViewFactory" />
-        <psi.treeChangePreprocessor implementation="com.gmail.blueboxware.libgdxplugin.filetypes.bitmapFont.structureView.BitmapFontTreeChangePreprocessor" />
+        <lang.psiStructureViewFactory language="LibGDXBitmapFont"
+                                      implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.bitmapFont.structureView.BitmapFontStructureViewFactory"/>
+        <psi.treeChangePreprocessor
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.bitmapFont.structureView.BitmapFontTreeChangePreprocessor"/>
 
-        <lang.foldingBuilder language="LibGDXBitmapFont" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.bitmapFont.editor.BitmapFontFoldingBuilder" />
+        <lang.foldingBuilder language="LibGDXBitmapFont"
+                             implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.bitmapFont.editor.BitmapFontFoldingBuilder"/>
 
         <!--Properties files-->
-        <psi.referenceContributor language="JAVA" implementation="com.gmail.blueboxware.libgdxplugin.filetypes.properties.GDXPropertiesReferenceContributor" />
-        <psi.referenceContributor language="kotlin" implementation="com.gmail.blueboxware.libgdxplugin.filetypes.properties.GDXPropertiesReferenceContributor" />
+        <psi.referenceContributor language="JAVA"
+                                  implementation="com.gmail.blueboxware.libgdxplugin.filetypes.properties.GDXPropertiesReferenceContributor"/>
+        <psi.referenceContributor language="kotlin"
+                                  implementation="com.gmail.blueboxware.libgdxplugin.filetypes.properties.GDXPropertiesReferenceContributor"/>
 
-        <properties.implicitPropertyUsageProvider implementation="com.gmail.blueboxware.libgdxplugin.filetypes.properties.GDXImplicitPropertyUsageProvider" />
+        <properties.implicitPropertyUsageProvider
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.properties.GDXImplicitPropertyUsageProvider"/>
 
-        <completion.contributor language="JAVA" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.properties.GDXPropertiesCompletionContributor" />
-        <completion.contributor language="kotlin" implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.properties.GDXPropertiesCompletionContributor" />
+        <completion.contributor language="JAVA"
+                                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.properties.GDXPropertiesCompletionContributor"/>
+        <completion.contributor language="kotlin"
+                                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.properties.GDXPropertiesCompletionContributor"/>
 
-        <useScopeEnlarger implementation="com.gmail.blueboxware.libgdxplugin.filetypes.properties.PropertiesFileUsageScopeEnlarger" />
+        <useScopeEnlarger
+                implementation="com.gmail.blueboxware.libgdxplugin.filetypes.properties.PropertiesFileUsageScopeEnlarger"/>
+
+        <!--Inspections-->
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="JAVA"
+                bundle="libgdxplugin"
+                key="unsafeiterator.display.name"
+                groupPath="libGDX"
+                groupName="Java"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXJavaUnsafeIterator"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.java.JavaUnsafeIteratorInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="JAVA"
+                bundle="libgdxplugin"
+                key="testid.name"
+                groupPath="libGDX"
+                groupName="Java"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXJavaTestId"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.java.JavaTestIdsInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="JAVA"
+                bundle="libgdxplugin"
+                key="static.resources.inspection.name"
+                groupPath="libGDX"
+                groupName="Java"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXJavaStaticResource"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.java.JavaStaticResourceInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="JAVA"
+                bundle="libgdxplugin"
+                key="missing.flush.inspection.name"
+                groupPath="libGDX"
+                groupName="Java"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXJavaMissingFlush"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.java.JavaMissingFlushInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="JAVA"
+                bundle="libgdxplugin"
+                key="profiling.code.inspection.name"
+                groupPath="libGDX"
+                groupName="Java"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXJavaProfilingCode"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.java.JavaProfilingCodeInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="JAVA"
+                bundle="libgdxplugin"
+                key="shaperenderer.64bit.crash.inspection.name"
+                groupPath="libGDX"
+                groupName="Java"
+                level="WARNING"
+                enabledByDefault="false"
+                hasStaticDescription="true"
+                shortName="GDXJavaShapeRendererCrash"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.java.JavaShapeRenderer64BitCrashInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="JAVA"
+                bundle="libgdxplugin"
+                key="flushing.inside.loop.inspection.name"
+                groupPath="libGDX"
+                groupName="Java"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXJavaFlushInsideLoop"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.java.JavaFlushInsideLoopInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="JAVA"
+                bundle="libgdxplugin"
+                key="log.level.inspection"
+                groupPath="libGDX"
+                groupName="Java"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXJavaLogLevel"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.java.JavaLogLevelInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="JAVA"
+                bundle="libgdxplugin"
+                key="gdxassets.annotation.inspection"
+                groupPath="libGDX"
+                groupName="Java"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXJavaAssetsFileError"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.java.JavaGDXAssetsInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="JAVA"
+                bundle="libgdxplugin"
+                key="invalid.property.key.inspection"
+                groupPath="libGDX"
+                groupName="Java"
+                level="ERROR"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXJavaInvalidPropertyKey"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.java.JavaInvalidPropertyKeyInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="JAVA"
+                bundle="libgdxplugin"
+                key="nonexisting.asset.inspection"
+                groupPath="libGDX"
+                groupName="Java"
+                shortName="GDXJavaNonExistingAsset"
+                level="ERROR"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.java.JavaNonExistingAssetInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="JAVA"
+                bundle="libgdxplugin"
+                key="unused.class.tag.inspection"
+                groupPath="libGDX"
+                groupName="Java"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXJavaUnusedTag"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.java.JavaUnusedClassTagInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="kotlin"
+                bundle="libgdxplugin"
+                key="unsafeiterator.display.name"
+                groupPath="libGDX"
+                groupName="Kotlin"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXKotlinUnsafeIterator"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.kotlin.KotlinUnsafeIteratorInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="kotlin"
+                bundle="libgdxplugin"
+                key="testid.name"
+                groupPath="libGDX"
+                groupName="Kotlin"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXKotlinTestId"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.kotlin.KotlinTestIdsInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="kotlin"
+                bundle="libgdxplugin"
+                key="static.resources.inspection.name"
+                groupPath="libGDX"
+                groupName="Kotlin"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXKotlinStaticResource"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.kotlin.KotlinStaticResourceInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="kotlin"
+                bundle="libgdxplugin"
+                key="missing.flush.inspection.name"
+                groupPath="libGDX"
+                groupName="Kotlin"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXKotlinMissingFlush"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.kotlin.KotlinMissingFlushInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="kotlin"
+                bundle="libgdxplugin"
+                key="profiling.code.inspection.name"
+                groupPath="libGDX"
+                groupName="Kotlin"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXKotlinProfilingCode"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.kotlin.KotlinProfilingCodeInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="kotlin"
+                bundle="libgdxplugin"
+                key="shaperenderer.64bit.crash.inspection.name"
+                groupPath="libGDX"
+                groupName="Kotlin"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXKotlinShapeRendererCrash"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.kotlin.KotlinShapeRenderer64BitCrashInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="kotlin"
+                bundle="libgdxplugin"
+                key="flushing.inside.loop.inspection.name"
+                groupPath="libGDX"
+                groupName="Kotlin"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXKotlinFlushInsideLoop"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.kotlin.KotlinFlushInsideLoopInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="kotlin"
+                bundle="libgdxplugin"
+                key="log.level.inspection"
+                groupPath="libGDX"
+                groupName="Kotlin"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXKotlinLogLevel"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.kotlin.KotlinLogLevelInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="kotlin"
+                bundle="libgdxplugin"
+                key="gdxassets.annotation.inspection"
+                groupPath="libGDX"
+                groupName="Kotlin"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXKotlinAssetsFileError"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.kotlin.KotlinGDXAssetsInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="kotlin"
+                bundle="libgdxplugin"
+                key="invalid.property.key.inspection"
+                groupPath="libGDX"
+                groupName="Kotlin"
+                level="ERROR"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXKotlinInvalidPropertyKey"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.kotlin.KotlinInvalidPropertyKeyInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="kotlin"
+                bundle="libgdxplugin"
+                key="nonexisting.asset.inspection"
+                shortName="GDXKotlinNonExistingAsset"
+                groupPath="libGDX"
+                groupName="Kotlin"
+                level="ERROR"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.kotlin.KotlinNonExistingAssetInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="kotlin"
+                bundle="libgdxplugin"
+                key="unused.class.tag.inspection"
+                groupPath="libGDX"
+                groupName="Kotlin"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                shortName="GDXKotlinUnusedTag"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.kotlin.KotlinUnusedClassTagInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="XML"
+                bundle="libgdxplugin"
+                key="no.opengl.directive.display.name"
+                groupPath="libGDX"
+                groupName="Android"
+                shortName="GDXOpenGLVersion"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.xml.OpenGLESDirectiveInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="XML"
+                bundle="libgdxplugin"
+                key="missing.files.permissions.display.name"
+                groupPath="libGDX"
+                groupName="Android"
+                shortName="GDXMissingFilesPermission"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.xml.MissingExternalFilesPermissionInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="Groovy"
+                bundle="libgdxplugin"
+                key="outdated.version.inspection.display.name.gradle"
+                groupPath="libGDX"
+                groupName="Gradle"
+                shortName="GDXOutdatedVersionGradleGroovy"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.gradle.GradleOutdatedVersionsInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="kotlin"
+                bundle="libgdxplugin"
+                key="outdated.version.inspection.display.name.gradle.kotlin"
+                groupPath="libGDX"
+                groupName="Gradle"
+                shortName="GDXOutdatedVersionGradleKotlin"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.gradle.GradleKotlinOutdatedVersionInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="Properties"
+                bundle="libgdxplugin"
+                key="outdated.version.inspection.display.name.gradle.properties"
+                groupPath="libGDX"
+                groupName="Gradle"
+                shortName="GDXOutdatedVersionGradleProperties"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.gradle.GradlePropertiesOutdatedVersionsInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="Groovy"
+                bundle="libgdxplugin"
+                key="testid.name.build.gradle"
+                groupPath="libGDX"
+                groupName="Gradle"
+                shortName="GDXGradleTestId"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.gradle.GradleTestIdsInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="Properties"
+                bundle="libgdxplugin"
+                key="testid.name.gradle.properties"
+                groupPath="libGDX"
+                groupName="Gradle"
+                shortName="GDXGradlePropertiesTestId"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.gradle.GradlePropertiesTestIdsInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="XML"
+                bundle="libgdxplugin"
+                key="testid.name"
+                groupPath="libGDX"
+                groupName="XML"
+                shortName="GDXXmlTestId"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.inspections.xml.XmlTestIdsInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="LibGDXSkin"
+                bundle="libgdxplugin"
+                key="skin.inspection.non.existing.class.display.name"
+                groupPath="libGDX"
+                groupName="Skin files"
+                shortName="GDXNonExistingClass"
+                level="ERROR"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.inspections.SkinNonExistingClassInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="LibGDXSkin"
+                bundle="libgdxplugin"
+                key="skin.inspection.non.existing.field.display.name"
+                groupPath="libGDX"
+                groupName="Skin files"
+                shortName="GDXNonExistingField"
+                level="ERROR"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.inspections.SkinNonExistingFieldInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="LibGDXSkin"
+                bundle="libgdxplugin"
+                key="skin.inspection.non.existing.resource.alias.display.name"
+                groupPath="libGDX"
+                groupName="Skin files"
+                shortName="GDXNonExistingResourceInAlias"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.inspections.SkinNonExistingResourceAliasInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="LibGDXSkin"
+                bundle="libgdxplugin"
+                key="skin.inspection.malformed.color.display.name"
+                groupPath="libGDX"
+                groupName="Skin files"
+                shortName="GDXMalformedColorString"
+                level="ERROR"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.inspections.SkinMalformedColorStringInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="LibGDXSkin"
+                bundle="libgdxplugin"
+                key="skin.inspection.types.display.name"
+                groupPath="libGDX"
+                groupName="Skin files"
+                shortName="GDXSkinType"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.inspections.SkinTypeInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="LibGDXSkin"
+                bundle="libgdxplugin"
+                key="skin.inspection.duplicate.resource.display.name"
+                groupPath="libGDX"
+                groupName="Skin files"
+                shortName="GDXDuplicateResource"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.inspections.SkinDuplicateResourceNameInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="LibGDXSkin"
+                bundle="libgdxplugin"
+                key="skin.inspection.missing.property.display.name"
+                groupPath="libGDX"
+                groupName="Skin files"
+                shortName="GDXMissingProperty"
+                level="ERROR"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.inspections.SkinMissingPropertyInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="LibGDXSkin"
+                bundle="libgdxplugin"
+                key="skin.inspection.duplicate.property.display.name"
+                groupPath="libGDX"
+                groupName="Skin files"
+                shortName="GDXDuplicateProperty"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.inspections.SkinDuplicatePropertyInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="LibGDXSkin"
+                bundle="libgdxplugin"
+                key="skin.inspection.non.existing.file.display.name"
+                groupPath="libGDX"
+                groupName="Skin files"
+                shortName="GDXNonExistingFile"
+                level="ERROR"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.inspections.SkinNonExistingFontFileInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="LibGDXSkin"
+                bundle="libgdxplugin"
+                key="skin.inspection.abbr.class.display.name"
+                groupPath="libGDX"
+                groupName="Skin files"
+                shortName="GDXAbbrClass"
+                level="WEAK WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.inspections.SkinAbbrClassInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="LibGDXSkin"
+                bundle="libgdxplugin"
+                key="skin.inspection.deprecated.display.name"
+                groupPath="libGDX"
+                groupName="Skin files"
+                shortName="GDXSkinDeprecated"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.inspections.SkinDeprecatedInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="LibGDXJson"
+                bundle="libgdxplugin"
+                key="json.inspection.invalid.escape.display.name"
+                groupPath="libGDX"
+                groupName="JSON"
+                shortName="GDXInvalidEscape"
+                level="ERROR"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.inspections.LibGDXJsonInvalidEscapeInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="LibGDXJson"
+                bundle="libgdxplugin"
+                key="json.inspection.duplicate.property.display.name"
+                groupPath="libGDX"
+                groupName="JSON"
+                shortName="GDXJsonDuplicateProperty"
+                level="WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.inspections.LibGDXDuplicatePropertyInspection"
+        />
+        <!--suppress PluginXmlCapitalization -->
+        <localInspection
+                language="LibGDXJson"
+                bundle="libgdxplugin"
+                key="json.inspection.toplevel.value.display.name"
+                groupPath="libGDX"
+                groupName="JSON"
+                shortName="GDXToplevel"
+                level="WEAK WARNING"
+                enabledByDefault="true"
+                hasStaticDescription="true"
+                implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.json.inspections.LibGDXTopLevelValueInspection"
+        />
 
     </extensions>
 
     <actions>
         <action class="com.gmail.blueboxware.libgdxplugin.actions.CreateScreenAction" id="LibGDXPlugin.NewScreen">
-            <add-to-group group-id="NewGroup" anchor="last" />
+            <add-to-group group-id="NewGroup" anchor="last"/>
         </action>
-        <action class="com.gmail.blueboxware.libgdxplugin.actions.MarkAsSkinAction" id="LibGDXPlugin.MarkAsSkin" text="Mark as LibGDX skin">
-            <add-to-group group-id="ProjectViewPopupMenuModifyGroup" anchor="last" />
+        <!--suppress PluginXmlCapitalization -->
+        <action class="com.gmail.blueboxware.libgdxplugin.actions.MarkAsSkinAction" id="LibGDXPlugin.MarkAsSkin"
+                text="Mark as libGDX Skin">
+            <add-to-group group-id="ProjectViewPopupMenuModifyGroup" anchor="last"/>
         </action>
-        <action class="com.gmail.blueboxware.libgdxplugin.actions.MarkAsGdxJsonAction" id="LibGDXPlugin.MarkAsGdxJson" text="Mark as LibGDX style JSON">
-            <add-to-group group-id="ProjectViewPopupMenuModifyGroup" anchor="last" />
+        <!--suppress PluginXmlCapitalization -->
+        <action class="com.gmail.blueboxware.libgdxplugin.actions.MarkAsGdxJsonAction" id="LibGDXPlugin.MarkAsGdxJson"
+                text="Mark as libGDX Style JSON">
+            <add-to-group group-id="ProjectViewPopupMenuModifyGroup" anchor="last"/>
         </action>
 
-        <action class="com.gmail.blueboxware.libgdxplugin.filetypes.skin.actions.CreateColorAction" id="LibGDXPlugin.Skin.CreateColor"
-                text="New color"
+        <action class="com.gmail.blueboxware.libgdxplugin.filetypes.skin.actions.CreateColorAction"
+                id="LibGDXPlugin.Skin.CreateColor"
+                text="New Color"
                 description="Create a new color specification">
             <add-to-group group-id="GenerateGroup" anchor="first"/>
         </action>
-      </actions>
+    </actions>
 
     <project-components>
         <component>
-            <implementation-class>com.gmail.blueboxware.libgdxplugin.components.LibGDXProjectComponent</implementation-class>
+            <implementation-class>com.gmail.blueboxware.libgdxplugin.settings.LibGDXProjectSkinFiles
+            </implementation-class>
         </component>
         <component>
-            <implementation-class>com.gmail.blueboxware.libgdxplugin.components.VersionManager</implementation-class>
+            <implementation-class>com.gmail.blueboxware.libgdxplugin.settings.LibGDXProjectNonSkinFiles
+            </implementation-class>
         </component>
         <component>
-            <implementation-class>com.gmail.blueboxware.libgdxplugin.settings.LibGDXProjectSkinFiles</implementation-class>
+            <implementation-class>com.gmail.blueboxware.libgdxplugin.settings.LibGDXProjectGdxJsonFiles
+            </implementation-class>
         </component>
         <component>
-            <implementation-class>com.gmail.blueboxware.libgdxplugin.settings.LibGDXProjectNonSkinFiles</implementation-class>
-        </component>
-        <component>
-            <implementation-class>com.gmail.blueboxware.libgdxplugin.settings.LibGDXProjectGdxJsonFiles</implementation-class>
-        </component>
-        <component>
-            <implementation-class>com.gmail.blueboxware.libgdxplugin.settings.LibGDXProjectNonGdxJsonFiles</implementation-class>
-        </component>
-        <component>
-            <implementation-class>com.gmail.blueboxware.libgdxplugin.annotators.ColorAnnotationsHighlightingPassFactory</implementation-class>
+            <implementation-class>com.gmail.blueboxware.libgdxplugin.settings.LibGDXProjectNonGdxJsonFiles
+            </implementation-class>
         </component>
     </project-components>
 

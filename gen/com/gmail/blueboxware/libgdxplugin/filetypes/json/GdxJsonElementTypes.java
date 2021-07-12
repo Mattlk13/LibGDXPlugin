@@ -9,29 +9,26 @@ import com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.impl.*;
 public interface GdxJsonElementTypes {
 
   IElementType ARRAY = new GdxJsonElementType("ARRAY");
-  IElementType BOOLEAN = new GdxJsonElementType("BOOLEAN");
   IElementType JOBJECT = new GdxJsonElementType("JOBJECT");
-  IElementType NULL = new GdxJsonElementType("NULL");
-  IElementType NUMBER = new GdxJsonElementType("NUMBER");
   IElementType PROPERTY = new GdxJsonElementType("PROPERTY");
   IElementType PROPERTY_NAME = new GdxJsonElementType("PROPERTY_NAME");
   IElementType STRING = new GdxJsonElementType("STRING");
   IElementType VALUE = new GdxJsonElementType("VALUE");
 
-  IElementType ANY_CHAR = new GdxJsonTokenType("ANY_CHAR");
   IElementType ASTERIX = new GdxJsonTokenType("*");
-  IElementType BACK_SLASH = new GdxJsonTokenType("\\");
-  IElementType BLOCK_COMMENT = new GdxJsonTokenType("BLOCK_COMMENT");
+  IElementType BACK_SLASH = new GdxJsonTokenType("BACK_SLASH");
+  IElementType BLOCK_COMMENT = new GdxJsonTokenType("BLOCK COMMENT");
   IElementType COLON = new GdxJsonTokenType(":");
   IElementType COMMA = new GdxJsonTokenType(",");
-  IElementType DOUBLE_QUOTE = new GdxJsonTokenType("\"");
-  IElementType DOUBLE_QUOTED_STRING = new GdxJsonTokenType("DOUBLE_QUOTED_STRING");
-  IElementType LINE_COMMENT = new GdxJsonTokenType("LINE_COMMENT");
+  IElementType DOUBLE_QUOTE = new GdxJsonTokenType("DOUBLE_QUOTE");
+  IElementType DOUBLE_QUOTED_STRING = new GdxJsonTokenType("QUOTED STRING");
+  IElementType LINE_COMMENT = new GdxJsonTokenType("LINE COMMENT");
   IElementType L_BRACKET = new GdxJsonTokenType("[");
   IElementType L_CURLY = new GdxJsonTokenType("{");
   IElementType R_BRACKET = new GdxJsonTokenType("]");
   IElementType R_CURLY = new GdxJsonTokenType("}");
   IElementType SLASH = new GdxJsonTokenType("/");
+  IElementType STRING_PART = new GdxJsonTokenType("STRING");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
@@ -39,17 +36,8 @@ public interface GdxJsonElementTypes {
       if (type == ARRAY) {
         return new GdxJsonArrayImpl(node);
       }
-      else if (type == BOOLEAN) {
-        return new GdxJsonBooleanImpl(node);
-      }
       else if (type == JOBJECT) {
         return new GdxJsonJobjectImpl(node);
-      }
-      else if (type == NULL) {
-        return new GdxJsonNullImpl(node);
-      }
-      else if (type == NUMBER) {
-        return new GdxJsonNumberImpl(node);
       }
       else if (type == PROPERTY) {
         return new GdxJsonPropertyImpl(node);

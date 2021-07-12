@@ -3,7 +3,6 @@ package com.gmail.blueboxware.libgdxplugin.inspections.java
 import com.gmail.blueboxware.libgdxplugin.inspections.checkForNonExistingAssetReference
 import com.gmail.blueboxware.libgdxplugin.message
 import com.gmail.blueboxware.libgdxplugin.utils.asString
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiLiteralExpression
@@ -27,12 +26,6 @@ import com.intellij.psi.PsiLiteralExpression
 class JavaNonExistingAssetInspection: LibGDXJavaBaseInspection() {
 
   override fun getStaticDescription() = message("nonexisting.asset.inspection.html.description")
-
-  override fun getID() = "LibGDXNonExistingAsset"
-
-  override fun getDisplayName() = message("nonexisting.asset.inspection")
-
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.ERROR
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object: JavaElementVisitor() {
 

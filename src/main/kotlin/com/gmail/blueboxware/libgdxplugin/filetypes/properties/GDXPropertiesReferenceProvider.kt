@@ -74,7 +74,10 @@ class GDXPropertiesReferenceProvider: PsiReferenceProvider() {
 
   }
 
-  private fun processPsiMethodCallExpression(element: PsiElement, methodCallExpression: PsiMethodCallExpression): Array<PsiReference> {
+  private fun processPsiMethodCallExpression(
+          element: PsiElement,
+          methodCallExpression: PsiMethodCallExpression
+  ): Array<PsiReference> {
 
     methodCallExpression.resolveCallToStrings()?.let { (className, methodName) ->
       if (className == I18NBUNDLE_CLASS_NAME && methodName in I18NBUNDLE_PROPERTIES_METHODS) {
@@ -91,18 +94,15 @@ class GDXPropertiesReferenceProvider: PsiReferenceProvider() {
 
   }
 
-  private fun createReferences(key: String, element: PsiElement, propertiesFiles: List<String>): Array<PsiReference> {
-
-    if (propertiesFiles.isEmpty()) {
-      return arrayOf(GDXPropertyReference(key, element, null))
-    } else {
-      return propertiesFiles.mapNotNull { propertiesFileName ->
-        (element.project.getPsiFile(propertiesFileName) as? PropertiesFile)?.let { propertiesFile ->
-          GDXPropertyReference(key, element, propertiesFile.resourceBundle.baseName)
-        }
-      }.toTypedArray()
-    }
-
-  }
+  private fun createReferences(key: String, element: PsiElement, propertiesFiles: List<String>): Array<PsiReference> =
+          if (propertiesFiles.isEmpty()) {
+            arrayOf(GDXPropertyReference(key, element, null))
+          } else {
+            propertiesFiles.mapNotNull { propertiesFileName ->
+              (element.project.getPsiFile(propertiesFileName) as? PropertiesFile)?.let { propertiesFile ->
+                GDXPropertyReference(key, element, propertiesFile.resourceBundle.baseName)
+              }
+            }.toTypedArray()
+          }
 
 }

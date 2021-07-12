@@ -58,11 +58,18 @@ class TextureRegionPreviewHintProvider: PreviewHintProvider {
         else -> null
       }?.references?.forEach { reference ->
         reference.resolve()?.let { target ->
+          @Suppress("ControlFlowWithEmptyBody")
           if (target is AtlasRegion) {
             target.image?.let { image ->
               return createPreviewComponent(image, target.name)
             }
-          } else if (target is SkinResource && target.classSpecification?.getRealClassNamesAsString()?.contains(TINTED_DRAWABLE_CLASS_NAME) == true) {
+          } else if (
+                  target is SkinResource
+                  && target
+                          .classSpecification
+                          ?.getRealClassNamesAsString()
+                          ?.contains(TINTED_DRAWABLE_CLASS_NAME) == true
+          ) {
 
             val tintedDrawableName = target.name
 
@@ -76,8 +83,19 @@ class TextureRegionPreviewHintProvider: PreviewHintProvider {
 
             var nameTarget: PsiElement? = target
 
-            while ((nameTarget as? SkinResource)?.classSpecification?.getRealClassNamesAsString()?.contains(TINTED_DRAWABLE_CLASS_NAME) == true) {
-              nameTarget = (nameTarget as? SkinResource)?.`object`?.getProperty(PROPERTY_NAME_TINTED_DRAWABLE_NAME)?.value?.reference?.resolve()
+            while (
+                    (nameTarget as? SkinResource)
+                            ?.classSpecification
+                            ?.getRealClassNamesAsString()
+                            ?.contains(TINTED_DRAWABLE_CLASS_NAME) == true
+            ) {
+              nameTarget =
+                      (nameTarget as? SkinResource)
+                              ?.`object`
+                              ?.getProperty(PROPERTY_NAME_TINTED_DRAWABLE_NAME)
+                              ?.value
+                              ?.reference
+                              ?.resolve()
             }
 
             (nameTarget as? AtlasRegion)?.let { atlasRegion ->
@@ -98,7 +116,7 @@ class TextureRegionPreviewHintProvider: PreviewHintProvider {
 
   }
 
-  private fun createPreviewComponent(image: BufferedImage, name: String?): JComponent? {
+  private fun createPreviewComponent(image: BufferedImage, name: String?): JComponent {
 
     var previewImage = image
     var scale = 1

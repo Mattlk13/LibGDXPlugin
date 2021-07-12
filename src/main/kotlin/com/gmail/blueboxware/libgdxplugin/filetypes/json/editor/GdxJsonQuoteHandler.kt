@@ -1,8 +1,8 @@
 package com.gmail.blueboxware.libgdxplugin.filetypes.json.editor
 
-import com.gmail.blueboxware.libgdxplugin.filetypes.json.GdxJsonElementTypes.DOUBLE_QUOTE
 import com.gmail.blueboxware.libgdxplugin.filetypes.json.GdxJsonElementTypes.DOUBLE_QUOTED_STRING
 import com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler
+import com.intellij.psi.TokenType.BAD_CHARACTER
 import com.intellij.psi.tree.TokenSet
 
 
@@ -21,4 +21,4 @@ import com.intellij.psi.tree.TokenSet
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-class GdxJsonQuoteHandler: SimpleTokenSetQuoteHandler(TokenSet.create(DOUBLE_QUOTED_STRING, DOUBLE_QUOTE))
+class GdxJsonQuoteHandler: SimpleTokenSetQuoteHandler(TokenSet.create(DOUBLE_QUOTED_STRING, BAD_CHARACTER))

@@ -25,18 +25,19 @@ abstract class SkinObjectMixin(node: ASTNode): SkinObject, SkinValueImpl(node) {
 
   override fun asResource(): SkinResource? = parent as? SkinResource
 
-  override fun resolveToField(property: SkinProperty): PsiField? = resolveToClass()?.findFieldByName(property.name, true)
+  override fun resolveToField(property: SkinProperty): PsiField? =
+          resolveToClass()?.findFieldByName(property.name, true)
 
   override fun addProperty(property: SkinProperty) = addPropertyExt(property)
 
   override fun addComment(comment: PsiComment) = addCommentExt(comment)
 
   override fun getPresentation() = object: ItemPresentation {
-    override fun getPresentableText(): String? = "object"
+    override fun getPresentableText(): String = "object"
 
     override fun getLocationString(): String? = null
 
-    override fun getIcon(unused: Boolean): Icon? = AllIcons.Json.Object
+    override fun getIcon(unused: Boolean): Icon = AllIcons.Json.Object
   }
 
   fun isHexColor() =

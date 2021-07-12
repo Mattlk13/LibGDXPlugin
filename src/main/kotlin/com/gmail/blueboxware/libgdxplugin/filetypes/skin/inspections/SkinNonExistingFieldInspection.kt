@@ -4,7 +4,6 @@ import com.gmail.blueboxware.libgdxplugin.filetypes.skin.psi.SkinElementVisitor
 import com.gmail.blueboxware.libgdxplugin.filetypes.skin.psi.SkinPropertyName
 import com.gmail.blueboxware.libgdxplugin.message
 import com.gmail.blueboxware.libgdxplugin.utils.*
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.ProblemsHolder
 
 /*
@@ -26,12 +25,6 @@ class SkinNonExistingFieldInspection: SkinBaseInspection() {
 
   override fun getStaticDescription() = message("skin.inspection.non.existing.field.description")
 
-  override fun getID() = "LibGDXSkinNonExistingField"
-
-  override fun getDisplayName() = message("skin.inspection.non.existing.field.display.name")
-
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.ERROR
-
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object: SkinElementVisitor() {
 
     override fun visitPropertyName(propertyName: SkinPropertyName) {
@@ -47,7 +40,12 @@ class SkinNonExistingFieldInspection: SkinBaseInspection() {
       if (typeString == COLOR_CLASS_NAME && name == "hex") {
         return
       } else if (typeString == BITMAPFONT_CLASS_NAME) {
-        if (!listOf(PROPERTY_NAME_FONT_FILE, PROPERTY_NAME_FONT_SCALED_SIZE, PROPERTY_NAME_FONT_FLIP, PROPERTY_NAME_FONT_MARKUP).contains(name)) {
+        if (!listOf(
+                        PROPERTY_NAME_FONT_FILE,
+                        PROPERTY_NAME_FONT_SCALED_SIZE,
+                        PROPERTY_NAME_FONT_FLIP,
+                        PROPERTY_NAME_FONT_MARKUP
+                ).contains(name)) {
           holder.registerProblem(propertyName, message("skin.inspection.non.existing.field.message.BitmapFont", name))
         }
         return

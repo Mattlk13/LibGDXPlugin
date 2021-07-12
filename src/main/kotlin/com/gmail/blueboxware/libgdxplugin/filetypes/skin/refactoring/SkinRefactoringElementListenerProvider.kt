@@ -54,15 +54,17 @@ class SkinRefactoringElementListenerProvider: RefactoringElementListenerProvider
 
     }
 
-    if (refToClassMap.isNotEmpty()) {
-      return MyRefactoringElementListener(refToClassMap)
+    return if (refToClassMap.isNotEmpty()) {
+      MyRefactoringElementListener(refToClassMap)
     } else {
-      return null
+      null
     }
 
   }
 
-  class MyRefactoringElementListener(private val refToClassMap: Map<SkinJavaClassReference, PsiClass>): RefactoringElementListener {
+  class MyRefactoringElementListener(
+          private val refToClassMap: Map<SkinJavaClassReference, PsiClass>
+  ): RefactoringElementListener {
 
     override fun elementRenamed(newElement: PsiElement) = refactored()
 

@@ -16,27 +16,17 @@
 package com.gmail.blueboxware.libgdxplugin.inspections.kotlin
 
 import com.gmail.blueboxware.libgdxplugin.utils.isLibGDXProject
-import com.intellij.codeHighlighting.HighlightDisplayLevel
+import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 
-open class LibGDXKotlinBaseInspection: AbstractKotlinInspection() {
-
-  override fun getGroupPath() = arrayOf("LibGDX", "Kotlin")
-
-  override fun getGroupDisplayName() = "LibGDX"
-
-  override fun isEnabledByDefault() = true
-
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.WARNING
-
-  override val suppressionKey = id
+@Suppress("InspectionDescriptionNotFoundInspection")
+open class LibGDXKotlinBaseInspection: LocalInspectionTool() {
 
   override fun isSuppressedFor(element: PsiElement): Boolean {
     return !element.project.isLibGDXProject() || super.isSuppressedFor(element)

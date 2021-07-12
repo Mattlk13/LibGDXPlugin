@@ -3,7 +3,6 @@ package com.gmail.blueboxware.libgdxplugin.inspections.gradle
 import com.gmail.blueboxware.libgdxplugin.message
 import com.gmail.blueboxware.libgdxplugin.utils.*
 import com.gmail.blueboxware.libgdxplugin.versions.Libraries
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
@@ -29,21 +28,8 @@ import org.jetbrains.kotlin.psi.KtVisitorVoid
  */
 class GradleKotlinOutdatedVersionInspection: AbstractKotlinInspection() {
 
-  override fun getGroupPath() = arrayOf("LibGDX", "Gradle")
-
-  override fun getGroupDisplayName() = "LibGDX"
-
-  override fun getID() = "LibGDXOutdatedVersionGradleKotlin"
-
-  override fun isEnabledByDefault() = true
-
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.WARNING
-
-  override fun getStaticDescription() = message("outdated.version.inspection.static.description", Libraries.listOfCheckedLibraries())
-
-  override fun getDisplayName() = message("outdated.version.inspection.display.name.gradle.kotlin")
-
-  override val suppressionKey = id
+  override fun getStaticDescription() =
+          message("outdated.version.inspection.static.description", Libraries.listOfCheckedLibraries())
 
   override fun isSuppressedFor(element: PsiElement): Boolean {
     return !element.project.isLibGDXProject() || super.isSuppressedFor(element)

@@ -1,24 +1,30 @@
+@file:Suppress("ReplaceNotNullAssertionWithElvisReturn")
+
 package com.gmail.blueboxware.libgdxplugin
 
-import com.gmail.blueboxware.libgdxplugin.components.VersionManager
 import com.gmail.blueboxware.libgdxplugin.utils.getLibraryInfoFromIdeaLibrary
 import com.gmail.blueboxware.libgdxplugin.versions.Libraries
 import com.gmail.blueboxware.libgdxplugin.versions.Library
+import com.gmail.blueboxware.libgdxplugin.versions.VersionService
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.command.UndoConfirmationPolicy
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.command.undo.UndoManager
+import com.intellij.openapi.components.service
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.impl.libraries.LibraryImpl
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.testFramework.PsiTestUtil
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.io.File
@@ -38,22 +44,31 @@ import java.io.File
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-abstract class LibGDXCodeInsightFixtureTestCase: LightCodeInsightFixtureTestCase() {
+abstract class LibGDXCodeInsightFixtureTestCase: LightJavaCodeInsightFixtureTestCase() {
 
-  private fun getTestDataBasePath() = FileUtil.toSystemDependentName(System.getProperty("user.dir") + "/src/test/testdata/")
+  private fun getTestDataBasePath() =
+          FileUtil.toSystemDependentName(System.getProperty("user.dir") + "/src/test/testdata/")
 
-  override fun getTestDataPath() = FileUtil.toSystemDependentName(getTestDataBasePath() + basePath)
+  override fun getTestDataPath() =
+          FileUtil.toSystemDependentName(getTestDataBasePath() + basePath)
 
-  fun addLibGDX() = addLibrary(getTestDataBasePath() + "/lib/gdx.jar")
+  fun addLibGDX() =
+          addLibrary(getTestDataBasePath() + "/lib/gdx.jar")
 
   fun addLibGDXSources() =
           WriteCommandAction.runWriteCommandAction(project) {
-            ProjectLibraryTable.getInstance(project).libraries.find { it.name == "gdx.jar" }?.let { library ->
-              library.modifiableModel.let {
-                it.addRoot(JarFileSystem.getInstance().findFileByPath(getTestDataBasePath() + "/lib/gdx-sources.jar!/")!!, OrderRootType.SOURCES)
-                it.commit()
-              }
-            }
+            LibraryTablesRegistrar.getInstance().getLibraryTable(project).libraries.find { it.name == "gdx.jar" }
+                    ?.let { library ->
+                      library.modifiableModel.let {
+                        it.addRoot(
+                                JarFileSystem
+                                        .getInstance()
+                                        .findFileByPath(getTestDataBasePath() + "/lib/gdx-sources.jar!/")!!,
+                                OrderRootType.SOURCES
+                        )
+                        it.commit()
+                      }
+                    }
           }
 
   fun addKotlin() = addLibrary(getTestDataBasePath() + "/lib/kotlin-runtime.jar")
@@ -63,9 +78,9 @@ abstract class LibGDXCodeInsightFixtureTestCase: LightCodeInsightFixtureTestCase
   fun addAnnotations() {
     addLibrary(File("build/libs/").listFiles { _, name ->
       name.startsWith("libgdxpluginannotations-") && !name.contains("sources")
-    }.sortedByDescending { file ->
+    }!!.maxBy { file ->
       MavenComparableVersion(file.name.substring(file.name.indexOf("-") + 1, file.name.indexOf(".jar")))
-    }.first().absolutePath)
+    }!!.absolutePath)
   }
 
   fun addDummyLibGDX199() = addDummyLibrary(Libraries.LIBGDX, "1.9.9")
@@ -76,23 +91,19 @@ abstract class LibGDXCodeInsightFixtureTestCase: LightCodeInsightFixtureTestCase
 
     WriteCommandAction.writeCommandAction(project).run<Throwable> {
 
-      val projectModel = ServiceManager.getService(project, ProjectLibraryTable::class.java)?.modifiableModel
-              ?: throw AssertionError()
+      val projectModel = LibraryTablesRegistrar.getInstance().getLibraryTable(project).modifiableModel
 
-      for (lib in projectModel.libraries) {
-        getLibraryInfoFromIdeaLibrary(lib)?.let { (libraries) ->
-          if (libraries == library) {
-            projectModel.removeLibrary(lib)
-          }
-        }
-      }
+      val libraryModel =
+              (projectModel.createLibrary(library.library.artifactId) as LibraryEx).modifiableModel
 
-      val libraryModel = (projectModel.createLibrary(library.library.artifactId) as LibraryImpl).modifiableModel
-
-      libraryModel.addRoot("/" + library.library.groupId + "/" + library.library.artifactId + "/" + version + "/", OrderRootType.CLASSES)
+      libraryModel.addRoot(
+              "/" + library.library.groupId + "/" + library.library.artifactId + "/" + version + "/",
+              OrderRootType.CLASSES
+      )
 
       libraryModel.commit()
       projectModel.commit()
+
     }
 
   }
@@ -104,10 +115,10 @@ abstract class LibGDXCodeInsightFixtureTestCase: LightCodeInsightFixtureTestCase
 
     file.accept(object: PsiRecursiveElementVisitor() {
 
-      override fun visitElement(element: PsiElement?) {
+      override fun visitElement(element: PsiElement) {
         super.visitElement(element)
 
-        if (element != null && elementType.isInstance(element)) {
+        if (elementType.isInstance(element)) {
           editor.caretModel.moveToOffset(element.startOffset)
           myFixture.availableIntentions.forEach {
             if (it.familyName.startsWith(familyNamePrefix)) {
@@ -132,8 +143,7 @@ abstract class LibGDXCodeInsightFixtureTestCase: LightCodeInsightFixtureTestCase
 
     WriteCommandAction.runWriteCommandAction(project) {
 
-      val projectModel = ServiceManager.getService(project, ProjectLibraryTable::class.java)?.modifiableModel
-              ?: throw AssertionError()
+      val projectModel = LibraryTablesRegistrar.getInstance().getLibraryTable(project).modifiableModel
 
       for (lib in projectModel.libraries) {
         getLibraryInfoFromIdeaLibrary(lib)?.let { (thisLibrary, thisVersion) ->
@@ -141,6 +151,24 @@ abstract class LibGDXCodeInsightFixtureTestCase: LightCodeInsightFixtureTestCase
             projectModel.removeLibrary(lib)
           }
         }
+      }
+
+      projectModel.commit()
+
+    }
+
+  }
+
+  private fun removeLibraries() {
+
+    WriteCommandAction.runWriteCommandAction(project) {
+
+      val projectModel = LibraryTablesRegistrar.getInstance().getLibraryTable(project).modifiableModel
+
+      for (lib in projectModel.libraries) {
+
+        projectModel.removeLibrary(lib)
+
       }
 
       projectModel.commit()
@@ -159,22 +187,29 @@ abstract class LibGDXCodeInsightFixtureTestCase: LightCodeInsightFixtureTestCase
               file.name
       )
     }
-    project.getComponent(VersionManager::class.java).updateUsedVersions()
+    project.service<VersionService>().updateUsedVersions()
   }
 
-  fun configureByFile(filePath: String): PsiFile = myFixture.configureByFile(filePath)
+  fun configureByFile(filePath: String): PsiFile =
+          myFixture.configureByFile(filePath)
 
-  fun configureByFiles(vararg filePaths: String): Array<PsiFile> = myFixture.configureByFiles(*filePaths)
+  fun configureByFiles(vararg filePaths: String): Array<PsiFile> =
+          myFixture.configureByFiles(*filePaths)
 
-  fun copyFileToProject(sourceFilePath: String) = myFixture.copyFileToProject(sourceFilePath)
+  fun copyFileToProject(sourceFilePath: String) =
+          myFixture.copyFileToProject(sourceFilePath)
 
-  fun copyFileToProject(sourceFilePath: String, targetPath: String) = myFixture.copyFileToProject(sourceFilePath, targetPath)
+  fun copyFileToProject(sourceFilePath: String, targetPath: String) =
+          myFixture.copyFileToProject(sourceFilePath, targetPath)
 
-  fun copyDirectoryToProject(sourceFilePath: String, targetPath: String) = myFixture.copyDirectoryToProject(sourceFilePath, targetPath)
+  fun copyDirectoryToProject(sourceFilePath: String, targetPath: String) =
+          myFixture.copyDirectoryToProject(sourceFilePath, targetPath)
 
-  fun configureByText(fileType: FileType, text: String): PsiFile = myFixture.configureByText(fileType, text)
+  fun configureByText(fileType: FileType, text: String): PsiFile =
+          myFixture.configureByText(fileType, text)
 
-  fun configureByText(fileName: String, text: String): PsiFile = myFixture.configureByText(fileName, text)
+  fun configureByText(fileName: String, text: String): PsiFile =
+          myFixture.configureByText(fileName, text)
 
   fun configureByFileAsGdxJson(filePath: String): PsiFile =
           myFixture.configureByFile(filePath).apply { markAsGdxJson() }
@@ -193,7 +228,11 @@ abstract class LibGDXCodeInsightFixtureTestCase: LightCodeInsightFixtureTestCase
     if (completionResults == null) {
 
       // the only item was auto-completed?
-      assertEquals("Got only 1 result. Expected results: $expectedCompletionStrings. Content: \n'$content'", 1, expectedCompletionStrings.size)
+      assertEquals(
+              "Got only 1 result. Expected results: $expectedCompletionStrings. Content: \n'$content'",
+              1,
+              expectedCompletionStrings.size
+      )
       val text = editor.document.text
       val expectedString = expectedCompletionStrings.first()
       val msg = "\nExpected string '$expectedString' not found. Content: '$content'"
@@ -216,14 +255,32 @@ abstract class LibGDXCodeInsightFixtureTestCase: LightCodeInsightFixtureTestCase
 
   }
 
+  fun runCommand(f: () -> Unit) =
+          CommandProcessor
+                  .getInstance()
+                  .executeCommand(
+                          project,
+                          f,
+                          "",
+                          null,
+                          UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
+                  )
+
+  fun undo() {
+    val fileEditor = FileEditorManager.getInstance(project).getEditors(file.virtualFile).first()
+    val undoManager = UndoManager.getInstance(project)
+
+    assertTrue(undoManager.isUndoAvailable(fileEditor))
+    undoManager.undo(fileEditor)
+  }
+
   override fun setUp() {
     assertIdeaHomePath()
 
     Library.TEST_URL = "http://127.0.0.1/maven/"
 
     super.setUp()
-
-    project.getComponent(VersionManager::class.java)?.updateUsedVersions()
+    removeLibraries()
   }
 
 }

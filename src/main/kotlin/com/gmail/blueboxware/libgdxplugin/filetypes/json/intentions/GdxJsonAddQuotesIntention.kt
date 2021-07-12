@@ -1,8 +1,9 @@
 package com.gmail.blueboxware.libgdxplugin.filetypes.json.intentions
 
 import com.gmail.blueboxware.libgdxplugin.filetypes.json.GdxJsonElementFactory
+import com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.GdxJsonLiteral
 import com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.GdxJsonPropertyName
-import com.gmail.blueboxware.libgdxplugin.filetypes.json.utils.parentString
+import com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.GdxJsonString
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -23,24 +24,25 @@ import com.intellij.psi.PsiElement
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@Suppress("IntentionDescriptionNotFoundInspection")
 class GdxJsonAddQuotesIntention: GdxJsonBaseIntention() {
 
   override fun getFamilyName(): String = "Wrap with double quotes"
 
   override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean =
-          element.parentString()?.isQuoted == false
+          (element.parent as? GdxJsonString)?.isQuoted == false
 
   override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
 
     (element.parent as? GdxJsonPropertyName)?.let { propertyName ->
-      val oldString = propertyName.value
-      val newString = GdxJsonElementFactory(project).createQuotedPropertyName(oldString) ?: return
+      val oldString = propertyName.getValue()
+      val newString = GdxJsonElementFactory(project).createPropertyName(oldString, true) ?: return
       propertyName.replace(newString)
       return
     }
 
-    element.parentString()?.let { string ->
-      val oldString = string.value
+    (element.parent as? GdxJsonLiteral)?.let { string ->
+      val oldString = string.getValue()
       val newString = GdxJsonElementFactory(project).createQuotedValueString(oldString) ?: return
       string.replace(newString)
     }

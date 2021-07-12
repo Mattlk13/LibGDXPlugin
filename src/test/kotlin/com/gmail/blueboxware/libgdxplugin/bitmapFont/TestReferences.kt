@@ -3,6 +3,7 @@ package com.gmail.blueboxware.libgdxplugin.bitmapFont
 import com.gmail.blueboxware.libgdxplugin.LibGDXCodeInsightFixtureTestCase
 import com.gmail.blueboxware.libgdxplugin.filetypes.atlas.psi.AtlasValue
 import com.gmail.blueboxware.libgdxplugin.utils.getParentOfType
+import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiFile
 
@@ -21,6 +22,7 @@ import com.intellij.psi.PsiFile
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@Suppress("ReplaceNotNullAssertionWithElvisReturn")
 class TestReferences: LibGDXCodeInsightFixtureTestCase() {
 
   fun testImageFileReference() {
@@ -32,7 +34,10 @@ class TestReferences: LibGDXCodeInsightFixtureTestCase() {
     assertNotNull(reference)
     val psiFile = reference?.resolve() as PsiFile
     assertNotNull(psiFile)
-    assertEquals("/src/assets/images/test.png", VfsUtilCore.getRelativeLocation(psiFile.virtualFile, project.baseDir))
+    assertEquals(
+            "assets/images/test.png",
+            VfsUtilCore.getRelativeLocation(psiFile.virtualFile, project.guessProjectDir()!!)
+    )
 
   }
 

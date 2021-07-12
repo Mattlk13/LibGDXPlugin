@@ -24,10 +24,6 @@ class JavaUnsafeIteratorInspection: LibGDXJavaBaseInspection() {
 
   override fun getStaticDescription() = message("unsafeiterator.html.description")
 
-  override fun getID() = "LibGDXUnsafeIterator"
-
-  override fun getDisplayName() = message("unsafeiterator.display.name")
-
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object: JavaElementVisitor() {
 
     override fun visitMethodCallExpression(expression: PsiMethodCallExpression?) {
@@ -49,7 +45,10 @@ class JavaUnsafeIteratorInspection: LibGDXJavaBaseInspection() {
 
       if (iteratorsMap[receiverFqClassName]?.contains(methodName) == true) {
 
-        holder.registerProblem(expression, "${message("unsafeiterator.problem.descriptor")}: $receiverShortClassName.$methodName()")
+        holder.registerProblem(
+                expression,
+                "${message("unsafeiterator.problem.descriptor")}: $receiverShortClassName.$methodName()"
+        )
 
       }
     }
@@ -63,10 +62,15 @@ class JavaUnsafeIteratorInspection: LibGDXJavaBaseInspection() {
       val receiverFqClassName = receiverClass.qualifiedName
       val receiverShortClassName = receiverClass.name
 
-      if (!iteratorsMap.containsKey(receiverFqClassName) || iteratorsMap[receiverFqClassName]?.contains("iterator") != true) return
+      if (!iteratorsMap.containsKey(receiverFqClassName)
+              || iteratorsMap[receiverFqClassName]?.contains("iterator") != true
+      ) return
 
       statement.iteratedValue?.let { iteratedValue ->
-        holder.registerProblem(iteratedValue, "${message("unsafeiterator.problem.descriptor")}: $receiverShortClassName.iterator()")
+        holder.registerProblem(
+                iteratedValue,
+                "${message("unsafeiterator.problem.descriptor")}: $receiverShortClassName.iterator()"
+        )
       }
 
     }

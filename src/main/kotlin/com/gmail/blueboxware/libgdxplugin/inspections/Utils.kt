@@ -1,6 +1,6 @@
 package com.gmail.blueboxware.libgdxplugin.inspections
 
-import com.gmail.blueboxware.libgdxplugin.components.VersionManager
+import com.gmail.blueboxware.libgdxplugin.versions.VersionService
 import com.gmail.blueboxware.libgdxplugin.filetypes.properties.GDXPropertyReference
 import com.gmail.blueboxware.libgdxplugin.filetypes.skin.LibGDXSkinFileType
 import com.gmail.blueboxware.libgdxplugin.filetypes.skin.findUsages.ClassTagFindUsagesHandler
@@ -14,6 +14,7 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.find.findUsages.FindUsagesOptions
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -48,7 +49,7 @@ internal fun checkForNonExistingAssetReference(element: PsiElement, elementName:
             val type = reference.className ?: "<unknown>"
             val files = reference.filesPresentableText(true).takeIf { it != "" }?.let { "in $it" } ?: ""
             val fixes =
-                    if (!elementName.isBlank()) {
+                    if (elementName.isNotBlank()) {
                       reference.className?.takeIf { it.plainName != TEXTURE_REGION_CLASS_NAME }?.let { className ->
                         reference.skinFiles.map { skinFile ->
                           CreateAssetQuickFix(skinFile, elementName, className, skinFile.name)
@@ -58,8 +59,11 @@ internal fun checkForNonExistingAssetReference(element: PsiElement, elementName:
                       null
                     }
 
-            holder.registerProblem(element, message("nonexisting.asset.problem.descriptor", elementName, type, files), *fixes
-                    ?: arrayOf())
+            holder.registerProblem(
+                    element,
+                    message("nonexisting.asset.problem.descriptor", elementName, type, files),
+                    *fixes ?: arrayOf()
+            )
 
           }
 
@@ -96,7 +100,7 @@ internal fun checkForUnusedClassTag(element: PsiElement, holder: ProblemsHolder)
 
 internal fun isValidProperty(element: PsiElement): Boolean {
 
-  element.references.filter { it is GDXPropertyReference }.let { references ->
+  element.references.filterIsInstance<GDXPropertyReference>().let { references ->
     if (references.isEmpty()) {
       return true
     }
@@ -113,7 +117,7 @@ internal fun isValidProperty(element: PsiElement): Boolean {
 
 internal fun isProblematicGDXVersionFor64Bit(project: Project): Boolean {
 
-  project.getComponent(VersionManager::class.java)?.let { versionManager ->
+  project.service<VersionService>().let { versionManager ->
     val gdxVersion = versionManager.getUsedVersion(Libraries.LIBGDX) ?: return false
 
     if (gdxVersion >= MavenComparableVersion("1.9.0") && gdxVersion < MavenComparableVersion("1.9.2")) {
@@ -128,7 +132,11 @@ internal fun checkSkinFilename(element: PsiElement, fileName: String, holder: Pr
 
   checkFilename(element, fileName, holder)?.let { psiFile ->
     if (psiFile.fileType != LibGDXSkinFileType.INSTANCE && psiFile !is SkinFile) {
-      holder.registerProblem(element, message("gdxassets.annotation.problem.descriptor.not.a.skin", fileName), ProblemHighlightType.WEAK_WARNING)
+      holder.registerProblem(
+              element,
+              message("gdxassets.annotation.problem.descriptor.not.a.skin", fileName),
+              ProblemHighlightType.WEAK_WARNING
+      )
     }
   }
 
@@ -141,7 +149,8 @@ internal fun checkFilename(element: PsiElement, fileName: String, holder: Proble
   val psiFile = element.project.getPsiFile(fileName)
 
   if (psiFile == null) {
-    holder.registerProblem(element,
+    holder.registerProblem(
+            element,
             message(
                     "gdxassets.annotation.problem.descriptor.nofile",
                     fileName,

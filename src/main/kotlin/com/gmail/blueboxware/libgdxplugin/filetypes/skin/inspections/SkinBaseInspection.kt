@@ -2,7 +2,6 @@ package com.gmail.blueboxware.libgdxplugin.filetypes.skin.inspections
 
 import com.gmail.blueboxware.libgdxplugin.filetypes.skin.psi.SkinElement
 import com.gmail.blueboxware.libgdxplugin.filetypes.skin.utils.*
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.SuppressQuickFix
 import com.intellij.openapi.application.ApplicationManager
@@ -27,28 +26,25 @@ abstract class SkinBaseInspection: LocalInspectionTool() {
 
   init {
     if (ApplicationManager.getApplication().isUnitTestMode) {
-      assert(INSPECTION_NAMES.contains(getShortID()))
+      assert(INSPECTION_NAMES.contains(id))
     }
   }
 
-  protected fun getShortID() = id.removePrefix("LibGDXSkin")
+  override fun getGroupPath() = arrayOf("libGDX", "Skin files")
 
-  override fun getGroupPath() = arrayOf("LibGDX", "Skin files")
-
-  override fun getGroupDisplayName() = "LibGDX"
+  @Suppress("DialogTitleCapitalization")
+  override fun getGroupDisplayName() = "libGDX"
 
   override fun isEnabledByDefault() = true
 
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.WARNING
-
   override fun isSuppressedFor(element: PsiElement): Boolean =
-          (element as? SkinElement)?.isSuppressed(getShortID()) ?: false
+          (element as? SkinElement)?.isSuppressed(id) ?: false
 
   override fun getBatchSuppressActions(element: PsiElement?): Array<SuppressQuickFix> =
           arrayOf(
-                  SuppressForPropertyFix(getShortID()),
-                  SuppressForObjectFix(getShortID()),
-                  SuppressForFileFix(getShortID())
+                  SuppressForPropertyFix(id),
+                  SuppressForObjectFix(id),
+                  SuppressForFileFix(id)
           )
 
 }

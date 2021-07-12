@@ -11,8 +11,10 @@ import static com.gmail.blueboxware.libgdxplugin.filetypes.json.GdxJsonElementTy
 
 %{
   public _GdxJsonLexer() {
-    this((java.io.Reader)null);
-  }
+      this(null);
+    }
+
+    StringBuffer string = new StringBuffer();
 %}
 
 %public
@@ -22,13 +24,13 @@ import static com.gmail.blueboxware.libgdxplugin.filetypes.json.GdxJsonElementTy
 %type IElementType
 %unicode
 
-EOL=\R
-WHITE_SPACE=\s+
+WHITE_SPACE=[ \t\n]+
 
 LINE_COMMENT="//".*
 BLOCK_COMMENT="/"\*([^*]|\*+[^*/])*(\*+"/")?
-DOUBLE_QUOTED_STRING=\"([^\\\"\r\n]|\\[^\r\n])*\"
-ANY_CHAR=.
+DOUBLE_QUOTED_STRING=\"([^\\\"]|\\.)*\"
+
+%state PART
 
 %%
 <YYINITIAL> {
@@ -40,16 +42,22 @@ ANY_CHAR=.
   "]"                         { return R_BRACKET; }
   ","                         { return COMMA; }
   ":"                         { return COLON; }
-  "\""                        { return DOUBLE_QUOTE; }
   "/"                         { return SLASH; }
-  "\\"                        { return BACK_SLASH; }
   "*"                         { return ASTERIX; }
+
+  {DOUBLE_QUOTED_STRING}      { return DOUBLE_QUOTED_STRING; }
 
   {LINE_COMMENT}              { return LINE_COMMENT; }
   {BLOCK_COMMENT}             { return BLOCK_COMMENT; }
-  {DOUBLE_QUOTED_STRING}      { return DOUBLE_QUOTED_STRING; }
-  {ANY_CHAR}                  { return ANY_CHAR; }
+
+  [^:}\],\n/\"]               { yypushback(1); yybegin(PART); }
+
+  [^]                         { return BAD_CHARACTER; }
 
 }
 
-[^] { return BAD_CHARACTER; }
+<PART> {
+    [^:}\],\n/\s]+       { yybegin(YYINITIAL); return STRING_PART; }
+    <<EOF>>            { yybegin(YYINITIAL); return STRING_PART; }
+}
+

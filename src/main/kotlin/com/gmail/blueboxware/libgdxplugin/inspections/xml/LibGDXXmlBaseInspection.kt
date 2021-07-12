@@ -1,7 +1,6 @@
 package com.gmail.blueboxware.libgdxplugin.inspections.xml
 
 import com.gmail.blueboxware.libgdxplugin.utils.isLibGDXProject
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.XmlSuppressableInspectionTool
 import com.intellij.psi.PsiElement
 
@@ -21,12 +20,6 @@ import com.intellij.psi.PsiElement
  * limitations under the License.
  */
 abstract class LibGDXXmlBaseInspection: XmlSuppressableInspectionTool() {
-
-  override fun getGroupDisplayName() = "LibGDX"
-
-  override fun isEnabledByDefault() = true
-
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.WARNING
 
   override fun isSuppressedFor(element: PsiElement): Boolean {
     return !element.project.isLibGDXProject() || super.isSuppressedFor(element)

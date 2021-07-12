@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName")
+
 package com.gmail.blueboxware.libgdxplugin.filetypes.skin.formatter
 
 import com.gmail.blueboxware.libgdxplugin.filetypes.skin.LibGDXSkinLanguage
@@ -8,12 +10,14 @@ import com.intellij.psi.codeStyle.CustomCodeStyleSettings
 
 /*
  *
- * Adapted from https://github.com/JetBrains/intellij-community/blob/171.2152/json/src/com/intellij/json/formatter/JsonCodeStyleSettings.java
+ * Adapted from
+ * https://github.com/JetBrains/intellij-community/blob/171.2152/json/src/com/intellij/json/formatter/JsonCodeStyleSettings.java
  *
  */
 
 
-class SkinCodeStyleSettings(container: CodeStyleSettings): CustomCodeStyleSettings(LibGDXSkinLanguage.INSTANCE.id, container) {
+class SkinCodeStyleSettings(container: CodeStyleSettings):
+        CustomCodeStyleSettings(LibGDXSkinLanguage.INSTANCE.id, container) {
 
   companion object {
     val DO_NOT_ALIGN_PROPERTY = PropertyAlignment.DO_NOT_ALIGN.id
@@ -23,11 +27,13 @@ class SkinCodeStyleSettings(container: CodeStyleSettings): CustomCodeStyleSettin
 
   @JvmField
   var SPACE_BEFORE_COLON = false
+
   @JvmField
   var SPACE_AFTER_COLON = true
 
   @JvmField
   var OBJECT_WRAPPING = CommonCodeStyleSettings.WRAP_ALWAYS
+
   @JvmField
   var ARRAY_WRAPPING = CommonCodeStyleSettings.WRAP_AS_NEEDED
 

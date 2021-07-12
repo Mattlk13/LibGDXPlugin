@@ -4,7 +4,6 @@ import com.gmail.blueboxware.libgdxplugin.filetypes.skin.psi.SkinElementVisitor
 import com.gmail.blueboxware.libgdxplugin.filetypes.skin.psi.SkinObject
 import com.gmail.blueboxware.libgdxplugin.message
 import com.gmail.blueboxware.libgdxplugin.utils.*
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 
@@ -27,35 +26,29 @@ class SkinMissingPropertyInspection: SkinBaseInspection() {
 
   override fun getStaticDescription() = message("skin.inspection.missing.property.description")
 
-  override fun getID() = "LibGDXSkinMissingProperty"
+  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
+          object: SkinElementVisitor() {
 
-  override fun getDisplayName() = message("skin.inspection.missing.property.display.name")
+            override fun visitObject(skinObject: SkinObject) {
 
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.ERROR
+              val mandatoryProperties =
+                      when (skinObject.resolveToTypeString()) {
+                        BITMAPFONT_CLASS_NAME -> setOf(PROPERTY_NAME_FONT_FILE)
+                        TINTED_DRAWABLE_CLASS_NAME -> listOf(
+                                PROPERTY_NAME_TINTED_DRAWABLE_NAME, PROPERTY_NAME_TINTED_DRAWABLE_COLOR
+                        )
+                        else -> null
+                      }
 
-  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = object: SkinElementVisitor() {
-
-    override fun visitObject(skinObject: SkinObject) {
-
-      val className = skinObject.resolveToTypeString()
-
-      val mandatoryProperties = if (className == BITMAPFONT_CLASS_NAME) {
-        setOf(PROPERTY_NAME_FONT_FILE)
-      } else if (className == TINTED_DRAWABLE_CLASS_NAME) {
-        listOf(PROPERTY_NAME_TINTED_DRAWABLE_NAME, PROPERTY_NAME_TINTED_DRAWABLE_COLOR)
-      } else {
-        null
-      }
-
-      mandatoryProperties?.forEach { property ->
-        if (!skinObject.propertyNames.contains(property)) {
-          holder.registerProblem(skinObject, message("skin.inspection.missing.property.message", property))
-        }
-      }
+              mandatoryProperties?.forEach { property ->
+                if (!skinObject.propertyNames.contains(property)) {
+                  holder.registerProblem(skinObject, message("skin.inspection.missing.property.message", property))
+                }
+              }
 
 
-    }
+            }
 
-  }
+          }
 
 }

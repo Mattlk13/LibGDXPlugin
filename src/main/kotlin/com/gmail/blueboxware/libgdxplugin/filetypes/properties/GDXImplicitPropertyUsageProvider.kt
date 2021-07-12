@@ -24,25 +24,18 @@ import org.jetbrains.kotlin.idea.search.allScope
  */
 class GDXImplicitPropertyUsageProvider: ImplicitPropertyUsageProvider() {
 
-  override fun isUsed(property: Property?): Boolean {
-
-    if (property == null) {
-      return false
-    }
+  public override fun isUsed(property: Property): Boolean {
 
     val project = property.project
     val name = property.name ?: return false
     val scope = project.allScope()
 
     val psiSearchHelper = PsiSearchHelper.getInstance(property.project)
-    val cheapEnough = psiSearchHelper.isCheapEnoughToSearch(name, scope, null, null)
 
-    if (cheapEnough == PsiSearchHelper.SearchCostResult.ZERO_OCCURRENCES) {
-      return false
-    } else if (cheapEnough == PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES) {
-      return true
-    } else {
-      ReferencesSearch.search(property, scope, false).forEach { reference ->
+    when (psiSearchHelper.isCheapEnoughToSearch(name, scope, null, null)) {
+      PsiSearchHelper.SearchCostResult.ZERO_OCCURRENCES -> return false
+      PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES -> return true
+      else -> ReferencesSearch.search(property, scope, false).forEach { reference ->
         if (reference is GDXPropertyReference) {
           return true
         }

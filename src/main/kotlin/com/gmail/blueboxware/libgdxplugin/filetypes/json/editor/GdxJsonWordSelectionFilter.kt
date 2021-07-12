@@ -1,6 +1,5 @@
 package com.gmail.blueboxware.libgdxplugin.filetypes.json.editor
 
-import com.gmail.blueboxware.libgdxplugin.filetypes.json.GdxJsonElementTypes.ANY_CHAR
 import com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.GdxJsonArray
 import com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.GdxJsonJobject
 import com.intellij.openapi.util.Condition
@@ -25,8 +24,7 @@ import com.intellij.psi.PsiElement
 class GdxJsonWordSelectionFilter: Condition<PsiElement> {
 
   override fun value(t: PsiElement?): Boolean =
-          t?.node?.elementType != ANY_CHAR
-                  && t !is GdxJsonJobject
+          t !is GdxJsonJobject
                   && t !is GdxJsonArray
 
 }

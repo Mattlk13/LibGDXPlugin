@@ -7,6 +7,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.PathUtil
@@ -58,19 +59,27 @@ internal fun PsiElement.isPrecededByNewline() = node.treePrev?.isNewline() ?: fa
 internal fun ASTNode.isNewline() =
         elementType == TokenType.WHITE_SPACE && text.contains('\n')
 
-internal fun PsiElement.isLeaf(vararg types: IElementType) = (this as? LeafPsiElement)?.elementType in types
+internal fun PsiElement.isLeaf(types: TokenSet): Boolean =
+        (this as? LeafPsiElement)?.elementType in types
+
+internal fun PsiElement.isLeaf(vararg types: IElementType): Boolean =
+        (this as? LeafPsiElement)?.elementType in types
 
 @Suppress("unused")
-internal inline fun <reified T: PsiElement> PsiElement.contextOfType(): T? = PsiTreeUtil.getContextOfType(this, T::class.java)
+internal inline fun <reified T: PsiElement> PsiElement.contextOfType(): T? =
+        PsiTreeUtil.getContextOfType(this, T::class.java)
 
-internal inline fun <reified T: PsiElement> PsiElement.childOfType(): T? = PsiTreeUtil.findChildOfType(this, T::class.java)
+internal inline fun <reified T: PsiElement> PsiElement.childOfType(): T? =
+        PsiTreeUtil.findChildOfType(this, T::class.java)
 
 internal inline fun <reified T: PsiElement> PsiElement.childrenOfType(): Collection<T> =
         PsiTreeUtil.findChildrenOfType(this, T::class.java)
 
-internal inline fun <reified T: PsiElement> PsiElement.firstParent(): T? = firstParent { it is T } as? T
+internal inline fun <reified T: PsiElement> PsiElement.firstParent(): T? =
+        firstParent { it is T } as? T
 
-internal fun PsiElement.firstParent(condition: (PsiElement) -> Boolean) = firstParent(true, condition)
+internal fun PsiElement.firstParent(condition: (PsiElement) -> Boolean) =
+        firstParent(true, condition)
 
 internal fun PsiElement.firstParent(includeSelf: Boolean, condition: (PsiElement) -> Boolean): PsiElement? {
 
@@ -86,9 +95,26 @@ internal fun PsiElement.firstParent(includeSelf: Boolean, condition: (PsiElement
   return null
 }
 
-internal fun PsiClass.supersAndThis() = InheritanceUtil.getSuperClasses(this) + this
+internal fun PsiElement.lastChild(condition: (PsiElement) -> Boolean): PsiElement? {
 
-internal fun ClassDescriptor.supersAndThis() = getAllSuperclassesWithoutAny() + this
+  var node = node.lastChildNode
+
+  while (node != null) {
+    if (condition(node.psi)) {
+      return node.psi
+    }
+    node = node.treePrev
+  }
+
+  return null
+
+}
+
+internal fun PsiClass.supersAndThis() =
+        InheritanceUtil.getSuperClasses(this) + this
+
+internal fun ClassDescriptor.supersAndThis() =
+        getAllSuperclassesWithoutAny() + this
 
 internal fun PsiElement.findParentWhichIsChildOf(childOf: PsiElement): PsiElement? {
   var element: PsiElement? = this
@@ -120,9 +146,11 @@ internal fun GrCommandArgumentList.getNamedArgument(name: String): GrExpression?
 internal fun KtValueArgumentList.getNamedArgument(name: String): KtExpression? =
         arguments.find { it.getArgumentName()?.asName?.asString() == name }?.getArgumentExpression()
 
-internal fun PsiLiteralExpression.asString(): String? = (value as? String)?.toString()
+internal fun PsiLiteralExpression.asString(): String? =
+        (value as? String)?.toString()
 
-internal fun KtStringTemplateExpression.asPlainString(): String? = if (isPlainWithEscapes()) plainContent else null
+internal fun KtStringTemplateExpression.asPlainString(): String? =
+        if (isPlainWithEscapes()) plainContent else null
 
 internal fun GrLiteral.asString(): String? =
         takeIf { (it as? GrLiteralImpl)?.isStringLiteral == true }?.value as? String
@@ -162,7 +190,11 @@ internal fun PsiClass.findAllStaticInnerClasses(): List<PsiClass> {
   val result = mutableListOf(this)
 
   for (innerClass in innerClasses) {
-    if (innerClass.hasModifierProperty(PsiModifier.STATIC) && (innerClass !is KtLightClass || innerClass.kotlinOrigin !is KtObjectDeclaration)) {
+    if (innerClass.hasModifierProperty(PsiModifier.STATIC)
+            && (innerClass !is KtLightClass
+                    || innerClass.kotlinOrigin !is KtObjectDeclaration
+                    )
+    ) {
       result.addAll(innerClass.findAllStaticInnerClasses())
     }
   }
@@ -221,12 +253,16 @@ internal fun KtCallExpression.resolveCall(): Pair<ClassDescriptor, KtNameReferen
 
   (context as? KtQualifiedExpression)?.let { dotExpression ->
 
-    val type = dotExpression.analyze().getType(dotExpression.receiverExpression)
+    val bindingContext = dotExpression.analyze()
+    val type = bindingContext.getType(dotExpression.receiverExpression)
     var receiverType: ClassDescriptor? = type?.constructor?.declarationDescriptor as? ClassDescriptor
 
     if (receiverType == null) {
       // static method call?
-      receiverType = dotExpression.receiverExpression.getReferenceTargets(dotExpression.analyze()).firstOrNull() as? ClassDescriptor
+      receiverType = dotExpression
+              .receiverExpression
+              .getReferenceTargets(bindingContext)
+              .firstOrNull() as? ClassDescriptor
               ?: return null
     }
 
@@ -248,18 +284,18 @@ internal fun KtCallExpression.resolveCallToStrings(): Pair<String, String>? =
 internal fun KotlinType.fqName() = constructor.declarationDescriptor?.fqNameSafe?.asString()
 
 internal fun PsiElement.findLeaf(elementType: IElementType): LeafPsiElement? =
-        allChildren.firstOrNull { it is LeafPsiElement && it.elementType == elementType } as? LeafPsiElement
+        allChildren.firstOrNull { it.isLeaf(elementType) } as? LeafPsiElement
 
 @Suppress("unused")
 internal fun PsiElement.findElement(condition: (PsiElement) -> Boolean): PsiElement? {
 
   val processor = object: PsiElementProcessor.FindElement<PsiElement>() {
     override fun execute(element: PsiElement): Boolean {
-      if (condition(element)) {
+      return if (condition(element)) {
         setFound(element)
-        return false
+        false
       } else {
-        return true
+        true
       }
     }
   }

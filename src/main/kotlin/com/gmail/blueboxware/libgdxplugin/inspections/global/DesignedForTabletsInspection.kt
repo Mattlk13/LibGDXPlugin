@@ -6,7 +6,6 @@ import com.gmail.blueboxware.libgdxplugin.utils.androidManifest.SdkVersionType
 import com.gmail.blueboxware.libgdxplugin.utils.firstParent
 import com.gmail.blueboxware.libgdxplugin.utils.isLibGDXProject
 import com.intellij.analysis.AnalysisScope
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.FilenameIndex
@@ -38,13 +37,10 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrC
  */
 class DesignedForTabletsInspection: GlobalInspectionTool() {
 
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.WARNING
-
   override fun getDisplayName() = message("designed.for.tablets.inspection")
 
-  override fun getGroupPath() = arrayOf("LibGDX", "Android")
-
-  override fun getGroupDisplayName() = "LibGDX"
+  @Suppress("DialogTitleCapitalization")
+  override fun getGroupDisplayName() = "libGDX"
 
   override fun getStaticDescription() = message("designed.for.tablets.html.description")
 
@@ -76,7 +72,11 @@ class DesignedForTabletsInspection: GlobalInspectionTool() {
     }
 
     val manifests =
-            FilenameIndex.getFilesByName(globalContext.project, "AndroidManifest.xml", globalContext.project.projectScope())
+            FilenameIndex.getFilesByName(
+                    globalContext.project,
+                    "AndroidManifest.xml",
+                    globalContext.project.projectScope()
+            )
 
     for (manifest in manifests) {
       (manifest as? XmlFile)?.let {
@@ -101,7 +101,11 @@ class DesignedForTabletsInspection: GlobalInspectionTool() {
 
   }
 
-  private fun processManifest(problems: MutableList<Pair<PsiElement, String>>, manifest: XmlFile, versionsMap: Map<SdkVersionType, Int>) {
+  private fun processManifest(
+          problems: MutableList<Pair<PsiElement, String>>,
+          manifest: XmlFile,
+          versionsMap: Map<SdkVersionType, Int>
+  ) {
 
     val model = ManifestModel.fromFile(manifest)
     model.applyExternalVersions(versionsMap)
@@ -184,8 +188,16 @@ private class DesignedForTabletsGradleVisitor(
 
     if (foundElementMap[SdkVersionType.TARGET] != null || foundElementMap[SdkVersionType.MIN] != null) {
       if (versionsMap[SdkVersionType.TARGET] ?: 11 < 11 && versionsMap[SdkVersionType.MIN] ?: 11 < 11) {
-        foundElementMap[SdkVersionType.TARGET]?.let { problems.add(it to message("designed.for.tablets.problem.descriptor.target.or.min")) }
-        foundElementMap[SdkVersionType.MIN]?.let { problems.add(it to message("designed.for.tablets.problem.descriptor.target.or.min")) }
+        foundElementMap[SdkVersionType.TARGET]?.let {
+          problems.add(
+                  it to message("designed.for.tablets.problem.descriptor.target.or.min")
+          )
+        }
+        foundElementMap[SdkVersionType.MIN]?.let {
+          problems.add(
+                  it to message("designed.for.tablets.problem.descriptor.target.or.min")
+          )
+        }
       }
     }
   }

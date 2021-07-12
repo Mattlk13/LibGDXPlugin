@@ -12,8 +12,10 @@
 
   tokenTypeClass = 'com.gmail.blueboxware.libgdxplugin.filetypes.json.GdxJsonTokenType'
 
-  implements("jobject|array|value|property|string|null|boolean|number") = "com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.GdxJsonElement"
+  implements("jobject|array|value|property") = "com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.GdxJsonElement"
+  implements("string") = "com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.GdxJsonLiteral"
   implements("property_name") = "com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.GdxJsonString"
+  implements("property") = "com.intellij.psi.PsiNamedElement"
 
   name("jobject") = 'object'
   name("property_name") = 'property name'
@@ -25,78 +27,82 @@
         R_BRACKET=']'
         COMMA=','
         COLON=':'
-        DOUBLE_QUOTE='"'
         SLASH='/'
-        BACK_SLASH='\'
         ASTERIX='*'
 
-        LINE_COMMENT='regexp://.*'
-        BLOCK_COMMENT='regexp:/\*([^*]|\*+[^*/])*(\*+/)?'
+        LINE_COMMENT='LINE COMMENT'
+        BLOCK_COMMENT='BLOCK COMMENT'
 
-        DOUBLE_QUOTED_STRING='regexp:"([^\\"\r\n]|\\[^\r\n])*"'
+        DOUBLE_QUOTED_STRING='QUOTED STRING'
+        STRING_PART='STRING'
 
-        ANY_CHAR='regexp:.'
     ]
 
 }
 
-json ::=  value 
+json ::= value?
 
 value ::= jobject | array | string {
     methods=[
         getValue
         isPropertyValue
+        isObject
     ]
     mixin="com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.impl.mixins.GdxJsonValueMixin"
 }
 
-jobject ::= '{'  property?  (separator  property)* ','?  '}' {
+jobject ::= '{' separator? ('}' | object_element* COMMA? '}'?) {
     mixin="com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.impl.mixins.GdxJsonJobjectMixin"
+    pin=1
     methods=[
         getProperty
         getProperties
     ]
 }
 
-array ::= '['  value?  (separator  value )* ','?  ']' {
-    mixin="com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.impl.mixins.GdxJsonArrayMixin"
+private object_element ::= property (separator|&'}') {
+  recoverWhile = not_brace_or_next_value
+  pin = 1
 }
 
-property ::= property_name  ':'  value {
+private not_brace_or_next_value ::= !('}'|value|separator)
+
+property ::= property_name ':' value {
     mixin="com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.impl.mixins.GdxJsonPropertyMixin"
-    pin = 1
-    recoverWhile = not_brace_or_separator
+    pin=1
 }
 
-private not_brace_or_separator ::= !( '}' | separator)
+array ::= '['  separator? array_element* COMMA? ']' {
+    mixin="com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.impl.mixins.GdxJsonArrayMixin"
+    pin=1
+}
+
+private array_element ::= value (separator|&']') {
+    pin=1
+    recoverWhile=not_bracket_or_next_value
+}
+
+private not_bracket_or_next_value ::= !(']'|value|separator)
 
 string ::= DOUBLE_QUOTED_STRING | unquoted_value_string {
     mixin="com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.impl.mixins.GdxJsonStringMixin"
     methods=[
         isQuoted
-        getValue
-
-        DOUBLE_QUOTED_STRING=""
+        isKeyword
+        isNumber
     ]
 }
 
-property_name ::= DOUBLE_QUOTED_STRING | unquoted_name_string {
+property_name ::= DOUBLE_QUOTED_STRING | unquoted_key_string {
     mixin="com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.impl.mixins.GdxJsonPropertyNameMixin"
-    methods=[
-        getValue
-        isQuoted
-
-        DOUBLE_QUOTED_STRING=""
-    ]
 }
 
-//noinspection BnfUnusedRule
-null ::= /* dummy */
-//noinspection BnfUnusedRule
-boolean ::= /* dummy */
-//noinspection BnfUnusedRule
-number ::= /* dummy */
+private unquoted_key_string ::=
+    (STRING_PART | L_CURLY | L_BRACKET | ASTERIX | SLASH)
+    (<<no_comment_or_newline>> (STRING_PART | DOUBLE_QUOTED_STRING | L_CURLY | L_BRACKET | R_BRACKET | COMMA | ASTERIX | SLASH))*
 
-external unquoted_value_string ::= parseUnquotedValueString
-external unquoted_name_string ::= parseUnquotedNameString
-external separator ::= parseSeparator
+private unquoted_value_string ::=
+    (STRING_PART | L_CURLY | ASTERIX | SLASH | BACK_SLASH)
+    (<<no_comment_or_newline>> (STRING_PART | DOUBLE_QUOTED_STRING | COLON | L_CURLY | L_BRACKET | DOUBLE_QUOTE | ASTERIX | SLASH))*
+
+private separator ::= <<parseSeparator>>

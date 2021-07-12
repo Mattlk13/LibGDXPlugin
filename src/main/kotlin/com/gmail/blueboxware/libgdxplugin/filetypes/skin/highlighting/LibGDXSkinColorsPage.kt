@@ -82,9 +82,14 @@ class LibGDXSkinColorsPage: ColorSettingsPage, InspectionColorSettingsPage, Disp
 
   }
 
-  override fun getIcon(): Icon? = Icons.SKIN_FILETYPE
+  override fun getIcon(): Icon = Icons.SKIN_FILETYPE
 
-  override fun getHighlighter(): SyntaxHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(LibGDXSkinLanguage.INSTANCE, null, null)
+  override fun getHighlighter(): SyntaxHighlighter =
+          SyntaxHighlighterFactory.getSyntaxHighlighter(
+                  LibGDXSkinLanguage.INSTANCE,
+                  null,
+                  null
+          )
 
   override fun getDemoText() = """
 {
@@ -117,7 +122,8 @@ class LibGDXSkinColorsPage: ColorSettingsPage, InspectionColorSettingsPage, Disp
 
   override fun getColorDescriptors(): Array<out ColorDescriptor> = ColorDescriptor.EMPTY_ARRAY
 
-  override fun getDisplayName() = "LibGDX Skin"
+  @Suppress("DialogTitleCapitalization")
+  override fun getDisplayName() = "libGDX skin"
 
   override fun getPriority(): DisplayPriority = DisplayPriority.LANGUAGE_SETTINGS
 

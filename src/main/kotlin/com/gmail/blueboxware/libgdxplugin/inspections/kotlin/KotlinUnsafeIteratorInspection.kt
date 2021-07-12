@@ -30,10 +30,6 @@ class KotlinUnsafeIteratorInspection: LibGDXKotlinBaseInspection() {
 
   override fun getStaticDescription() = message("unsafeiterator.html.description")
 
-  override fun getID() = "LibGDXUnsafeIterator"
-
-  override fun getDisplayName() = message("unsafeiterator.display.name")
-
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object: KtVisitorVoid() {
 
     override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
@@ -48,7 +44,10 @@ class KotlinUnsafeIteratorInspection: LibGDXKotlinBaseInspection() {
 
       if (iteratorsMap[receiverTypeFqName]?.contains(methodName) != true) return
 
-      holder.registerProblem(expression, "${message("unsafeiterator.problem.descriptor")}: $receiverTypeShortName.$methodName()")
+      holder.registerProblem(
+              expression,
+              "${message("unsafeiterator.problem.descriptor")}: $receiverTypeShortName.$methodName()"
+      )
 
     }
 
@@ -61,8 +60,13 @@ class KotlinUnsafeIteratorInspection: LibGDXKotlinBaseInspection() {
         val iteratorTypeFqName = iteratorType.fqNameSafe.asString()
         val iteratorTypeShortName = iteratorType.name
 
-        if (iteratorsMap.containsKey(iteratorTypeFqName) && (iteratorsMap[iteratorTypeFqName]?.contains("iterator") == true)) {
-          holder.registerProblem(loopRange, "${message("unsafeiterator.problem.descriptor")}: $iteratorTypeShortName.iterator()")
+        if (iteratorsMap.containsKey(iteratorTypeFqName)
+                && (iteratorsMap[iteratorTypeFqName]?.contains("iterator") == true)
+        ) {
+          holder.registerProblem(
+                  loopRange,
+                  "${message("unsafeiterator.problem.descriptor")}: $iteratorTypeShortName.iterator()"
+          )
         }
 
       }

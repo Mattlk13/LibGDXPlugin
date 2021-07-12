@@ -2,6 +2,7 @@ package com.gmail.blueboxware.libgdxplugin.inspections.kotlin
 
 import com.gmail.blueboxware.libgdxplugin.utils.isSetLogLevel
 import com.gmail.blueboxware.libgdxplugin.message
+import com.gmail.blueboxware.libgdxplugin.utils.compat.isGetter
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
@@ -28,10 +29,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 class KotlinLogLevelInspection: LibGDXKotlinBaseInspection() {
 
   override fun getStaticDescription() = message("log.level.html.description")
-
-  override fun getID() = "LibGDXLogLevel"
-
-  override fun getDisplayName() = message("log.level.inspection")
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object: KtVisitorVoid() {
 
@@ -70,7 +67,7 @@ class KotlinLogLevelInspection: LibGDXKotlinBaseInspection() {
 
         for (ref in refs) {
 
-          if (ref is SyntheticPropertyAccessorReference.Setter) {
+          if ((ref as? SyntheticPropertyAccessorReference)?.isGetter() == false) {
             val target = ref.resolve()
             if (target is PsiMethod) {
               val clazz = target.containingClass ?: continue

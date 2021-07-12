@@ -6,7 +6,6 @@ import com.gmail.blueboxware.libgdxplugin.filetypes.skin.psi.SkinStringLiteral
 import com.gmail.blueboxware.libgdxplugin.message
 import com.gmail.blueboxware.libgdxplugin.utils.BITMAPFONT_CLASS_NAME
 import com.gmail.blueboxware.libgdxplugin.utils.PROPERTY_NAME_FONT_FILE
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.ProblemsHolder
 
 /*
@@ -27,12 +26,6 @@ import com.intellij.codeInspection.ProblemsHolder
 class SkinNonExistingFontFileInspection: SkinBaseInspection() {
 
   override fun getStaticDescription() = message("skin.inspection.non.existing.file.description")
-
-  override fun getID() = "LibGDXSkinNonExistingFile"
-
-  override fun getDisplayName() = message("skin.inspection.non.existing.file.display.name")
-
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.ERROR
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object: SkinElementVisitor() {
 

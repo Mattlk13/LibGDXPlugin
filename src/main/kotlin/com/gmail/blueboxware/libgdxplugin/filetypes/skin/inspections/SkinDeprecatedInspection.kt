@@ -4,7 +4,6 @@ import com.gmail.blueboxware.libgdxplugin.filetypes.skin.psi.SkinClassName
 import com.gmail.blueboxware.libgdxplugin.filetypes.skin.psi.SkinElementVisitor
 import com.gmail.blueboxware.libgdxplugin.filetypes.skin.psi.SkinPropertyName
 import com.gmail.blueboxware.libgdxplugin.message
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
@@ -29,32 +28,35 @@ class SkinDeprecatedInspection: SkinBaseInspection() {
 
   override fun getStaticDescription() = message("skin.inspection.deprecated.description")
 
-  override fun getID() = "LibGDXSkinDeprecated"
+  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
+          object: SkinElementVisitor() {
 
-  override fun getDisplayName() = message("skin.inspection.deprecated.display.name")
+            override fun visitClassName(className: SkinClassName) {
 
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.WARNING
+              if (className.resolve()?.isDeprecated == true) {
+                holder.registerProblem(
+                        className,
+                        message("skin.inspection.deprecated.message", className.value.plainName),
+                        ProblemHighlightType.LIKE_DEPRECATED
+                )
+              }
 
-  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = object: SkinElementVisitor() {
+            }
 
-    override fun visitClassName(className: SkinClassName) {
+            override fun visitPropertyName(propertyName: SkinPropertyName) {
 
-      if (className.resolve()?.isDeprecated == true) {
-        holder.registerProblem(className, message("skin.inspection.deprecated.message", className.value.plainName), ProblemHighlightType.LIKE_DEPRECATED)
-      }
+              propertyName.property?.let { property ->
+                if (property.resolveToField()?.isDeprecated == true) {
+                  holder.registerProblem(
+                          propertyName,
+                          message("skin.inspection.deprecated.message", propertyName.value),
+                          ProblemHighlightType.LIKE_DEPRECATED
+                  )
+                }
+              }
 
-    }
+            }
 
-    override fun visitPropertyName(propertyName: SkinPropertyName) {
-
-      propertyName.property?.let { property ->
-        if (property.resolveToField()?.isDeprecated == true) {
-          holder.registerProblem(propertyName, message("skin.inspection.deprecated.message", propertyName.value), ProblemHighlightType.LIKE_DEPRECATED)
-        }
-      }
-
-    }
-
-  }
+          }
 
 }

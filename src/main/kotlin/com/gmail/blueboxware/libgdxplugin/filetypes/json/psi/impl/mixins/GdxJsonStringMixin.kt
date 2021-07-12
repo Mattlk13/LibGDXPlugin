@@ -34,14 +34,25 @@ abstract class GdxJsonStringMixin(node: ASTNode): GdxJsonString, GdxJsonElementI
             text
           }
 
+  override fun toFloatOrNull(): Float? = getValue().toFloatOrNull()
+
+  override fun isKeyword(): Boolean = !isQuoted && getValue() in KEYWORDS
+
+  override fun isNumber(): Boolean =
+          getValue().toFloatOrNull() != null || getValue().toLongOrNull() != null
+
   override fun getPresentation(): ItemPresentation? = object: ItemPresentation {
 
     override fun getLocationString(): String? = null
 
     override fun getIcon(unused: Boolean): Icon? = null
 
-    override fun getPresentableText(): String? = StringUtil.unescapeStringCharacters(value)
+    override fun getPresentableText(): String = StringUtil.unescapeStringCharacters(getValue())
 
+  }
+
+  companion object {
+    val KEYWORDS = listOf("null", "true", "false")
   }
 
 }

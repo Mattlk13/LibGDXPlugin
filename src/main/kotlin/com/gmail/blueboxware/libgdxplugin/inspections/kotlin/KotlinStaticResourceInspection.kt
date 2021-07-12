@@ -28,11 +28,8 @@ import org.jetbrains.kotlin.psi.KtVisitorVoid
 
 class KotlinStaticResourceInspection: LibGDXKotlinBaseInspection() {
 
-  override fun getStaticDescription() = message("static.resources.html.description") + message("static.resources.html.description.kotlin.note")
-
-  override fun getID() = "LibGDXStaticResource"
-
-  override fun getDisplayName() = message("static.resources.inspection.name")
+  override fun getStaticDescription() =
+          message("static.resources.html.description") + message("static.resources.html.description.kotlin.note")
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object: KtVisitorVoid() {
 

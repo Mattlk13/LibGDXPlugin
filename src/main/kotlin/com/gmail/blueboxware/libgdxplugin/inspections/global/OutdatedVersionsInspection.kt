@@ -1,15 +1,15 @@
 package com.gmail.blueboxware.libgdxplugin.inspections.global
 
-import com.gmail.blueboxware.libgdxplugin.components.VersionManager
 import com.gmail.blueboxware.libgdxplugin.message
 import com.gmail.blueboxware.libgdxplugin.utils.isLibGDXProject
 import com.gmail.blueboxware.libgdxplugin.versions.Libraries
+import com.gmail.blueboxware.libgdxplugin.versions.VersionService
 import com.intellij.analysis.AnalysisScope
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.GlobalInspectionContext
 import com.intellij.codeInspection.GlobalInspectionTool
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.ProblemDescriptionsProcessor
+import com.intellij.openapi.components.service
 
 /*
  * Copyright 2017 Blue Box Ware
@@ -28,27 +28,21 @@ import com.intellij.codeInspection.ProblemDescriptionsProcessor
  */
 class OutdatedVersionsInspection: GlobalInspectionTool() {
 
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.WARNING
+  override fun getStaticDescription() =
+          message("outdated.version.inspection.static.description", Libraries.listOfCheckedLibraries())
 
-  override fun getDisplayName() = message("outdated.version.inspection.display.name")
-
-  override fun getGroupPath() = arrayOf("LibGDX", "General")
-
-  override fun getGroupDisplayName() = "LibGDX"
-
-  override fun getStaticDescription() = message("outdated.version.inspection.static.description", Libraries.listOfCheckedLibraries())
-
-  override fun isEnabledByDefault() = true
-
-  override fun getShortName() = "LibGDXOutdatedVersion"
-
-  override fun runInspection(scope: AnalysisScope, manager: InspectionManager, globalContext: GlobalInspectionContext, problemDescriptionsProcessor: ProblemDescriptionsProcessor) {
+  override fun runInspection(
+          scope: AnalysisScope,
+          manager: InspectionManager,
+          globalContext: GlobalInspectionContext,
+          problemDescriptionsProcessor: ProblemDescriptionsProcessor
+  ) {
 
     if (!globalContext.project.isLibGDXProject()) {
       return
     }
 
-    val versionManager = globalContext.project.getComponent(VersionManager::class.java) ?: return
+    val versionManager = globalContext.project.service<VersionService>()
 
     for (library in Libraries.values()) {
       val usedVersion = versionManager.getUsedVersion(library) ?: continue

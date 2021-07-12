@@ -3,7 +3,6 @@ package com.gmail.blueboxware.libgdxplugin.inspections.java
 import com.gmail.blueboxware.libgdxplugin.inspections.isValidProperty
 import com.gmail.blueboxware.libgdxplugin.message
 import com.gmail.blueboxware.libgdxplugin.utils.asString
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiLiteralExpression
@@ -28,12 +27,6 @@ class JavaInvalidPropertyKeyInspection: LibGDXJavaBaseInspection() {
 
   override fun getStaticDescription() = message("invalid.property.key.inspection.html.description")
 
-  override fun getID() = "LibGDXInvalidPropertyKey"
-
-  override fun getDisplayName() = message("invalid.property.key.inspection")
-
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.ERROR
-
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object: JavaElementVisitor() {
 
     override fun visitLiteralExpression(expression: PsiLiteralExpression?) {
@@ -43,8 +36,13 @@ class JavaInvalidPropertyKeyInspection: LibGDXJavaBaseInspection() {
       }
 
       if (!isValidProperty(expression)) {
-        holder.registerProblem(expression, message("invalid.property.key.inspection.problem.descriptor", expression.asString()
-                ?: ""))
+        holder.registerProblem(
+                expression,
+                message(
+                        "invalid.property.key.inspection.problem.descriptor", expression.asString()
+                        ?: ""
+                )
+        )
       }
 
     }

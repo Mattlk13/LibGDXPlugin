@@ -3,7 +3,6 @@ package com.gmail.blueboxware.libgdxplugin.inspections.kotlin
 import com.gmail.blueboxware.libgdxplugin.inspections.checkForNonExistingAssetReference
 import com.gmail.blueboxware.libgdxplugin.message
 import com.gmail.blueboxware.libgdxplugin.utils.asPlainString
-import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.KtVisitorVoid
@@ -27,12 +26,6 @@ import org.jetbrains.kotlin.psi.KtVisitorVoid
 class KotlinNonExistingAssetInspection: LibGDXKotlinBaseInspection() {
 
   override fun getStaticDescription() = message("nonexisting.asset.inspection.html.description")
-
-  override fun getID() = "LibGDXNonExistingAsset"
-
-  override fun getDisplayName() = message("nonexisting.asset.inspection")
-
-  override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.ERROR
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object: KtVisitorVoid() {
 

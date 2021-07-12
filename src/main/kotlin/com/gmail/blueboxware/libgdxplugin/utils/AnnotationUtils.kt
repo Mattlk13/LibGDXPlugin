@@ -47,15 +47,11 @@ class KtAnnotationWrapper(private val ktAnnotationEntry: KtAnnotationEntry): Ann
     ktAnnotationEntry.valueArguments.forEach { argument ->
       val name = argument.getArgumentName()?.asName?.identifier
       if (name == key) {
-        val argumentExpression = argument.getArgumentExpression()
-        val arguments = if (argumentExpression is KtCallExpression) {
-          argumentExpression.valueArguments.map { it.getArgumentExpression() }
-        } else if (argumentExpression is KtCollectionLiteralExpression) {
-          argumentExpression.getInnerExpressions()
-        } else if (argumentExpression is KtStringTemplateExpression) {
-          listOf(argumentExpression)
-        } else {
-          listOf()
+        val arguments = when (val argumentExpression = argument.getArgumentExpression()) {
+          is KtCallExpression -> argumentExpression.valueArguments.map { it.getArgumentExpression() }
+          is KtCollectionLiteralExpression -> argumentExpression.getInnerExpressions()
+          is KtStringTemplateExpression -> listOf(argumentExpression)
+          else -> listOf()
         }
         return arguments.mapNotNull { (it as? KtStringTemplateExpression)?.asPlainString() }
       }
@@ -96,11 +92,12 @@ internal fun PsiMethodCallExpression.getAnnotation(annotationClass: PsiClass): A
     }
 
     (((qualifierExpression as? PsiMethodCallExpression)?.methodExpression?.resolve() as? KtLightMethod)?.kotlinOrigin as? KtProperty)?.let { ktProperty ->
-      AnnotatedElementsSearch.searchElements(annotationClass, project.projectScope(), KtLightField::class.java).forEach { member ->
-        if (member.kotlinOrigin == ktProperty) {
-          return ktProperty.getAnnotation(annotationClass)
-        }
-      }
+      AnnotatedElementsSearch.searchElements(annotationClass, project.projectScope(), KtLightField::class.java)
+              .forEach { member ->
+                if (member.kotlinOrigin == ktProperty) {
+                  return ktProperty.getAnnotation(annotationClass)
+                }
+              }
     }
 
   }
@@ -136,21 +133,23 @@ internal fun KtCallExpression.getAnnotation(annotationClass: PsiClass): Annotati
     val annotationTarget = (receiverExpression as? KtQualifiedExpression)?.selectorExpression?.unwrap()
             ?: receiverExpression
 
-    annotationTarget.references.mapNotNull { it.resolve() }.filter { it is KtProperty || it is PsiField }.let { origins ->
-      origins.forEach { origin ->
-        (origin as? KtProperty)?.getAnnotation(annotationClass)?.let {
-          return it
-        }
-      }
+    annotationTarget.references.mapNotNull { it.resolve() }.filter { it is KtProperty || it is PsiField }
+            .let { origins ->
+              origins.forEach { origin ->
+                (origin as? KtProperty)?.getAnnotation(annotationClass)?.let {
+                  return it
+                }
+              }
 
-      AnnotatedElementsSearch.searchElements(annotationClass, project.projectScope(), PsiMember::class.java).forEach { member ->
-        if (member in origins || (member as? KtLightMember<*>)?.kotlinOrigin?.let { it in origins } == true) {
-          AnnotationUtil.findAnnotation(member, annotationClass.qualifiedName)?.let {
-            return PsiAnnotationWrapper(it)
-          }
-        }
-      }
-    }
+              AnnotatedElementsSearch.searchElements(annotationClass, project.projectScope(), PsiMember::class.java)
+                      .forEach { member ->
+                        if (member in origins || (member as? KtLightMember<*>)?.kotlinOrigin?.let { it in origins } == true) {
+                          AnnotationUtil.findAnnotation(member, annotationClass.qualifiedName)?.let {
+                            return PsiAnnotationWrapper(it)
+                          }
+                        }
+                      }
+            }
 
   }
 
@@ -160,7 +159,7 @@ internal fun KtCallExpression.getAnnotation(annotationClass: PsiClass): Annotati
 
 internal fun KtAnnotated.getAnnotation(annotationClass: PsiClass): AnnotationWrapper? =
         annotationClass.qualifiedName?.let { qualifiedName ->
-          findAnnotation(FqName(qualifiedName))?.let { annotationEntry ->
+          findAnnotation(FqName(qualifiedName))?.let<KtAnnotationEntry, KtAnnotationWrapper> { annotationEntry ->
             return KtAnnotationWrapper(annotationEntry)
           }
         }

@@ -4,14 +4,15 @@ import com.gmail.blueboxware.libgdxplugin.filetypes.json.GdxJsonElementTypes.*
 import com.gmail.blueboxware.libgdxplugin.filetypes.json.GdxJsonParserDefinition
 import com.gmail.blueboxware.libgdxplugin.filetypes.json.GdxJsonParserDefinition.Companion.CONTAINERS
 import com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.GdxJsonJobject
+import com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.GdxJsonLiteral
 import com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.GdxJsonProperty
-import com.gmail.blueboxware.libgdxplugin.filetypes.json.psi.GdxJsonString
 import com.intellij.lang.ASTNode
 import com.intellij.lang.folding.FoldingBuilder
 import com.intellij.lang.folding.FoldingDescriptor
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType.WHITE_SPACE
 import org.jetbrains.kotlin.psi.psiUtil.children
 
@@ -25,10 +26,13 @@ class GdxJsonFoldingBuilder: FoldingBuilder, DumbAware {
 
   override fun isCollapsedByDefault(node: ASTNode): Boolean = false
 
-  override fun buildFoldRegions(node: ASTNode, document: Document): Array<FoldingDescriptor> =
-          collectDescriptorsRecursively(node, document, mutableListOf()).toTypedArray()
+  override fun buildFoldRegions(node: ASTNode, document: Document): Array<FoldingDescriptor> {
+    val descriptors = mutableListOf<FoldingDescriptor>()
+    collectDescriptorsRecursively(node, document, descriptors)
+    return descriptors.toTypedArray()
+  }
 
-  override fun getPlaceholderText(node: ASTNode): String? {
+  override fun getPlaceholderText(node: ASTNode): String {
 
     (node.psi as? GdxJsonJobject)?.let { jObject ->
 
@@ -36,7 +40,7 @@ class GdxJsonFoldingBuilder: FoldingBuilder, DumbAware {
       for (property: GdxJsonProperty? in jObject.propertyList) {
         val name = property?.name ?: continue
         val value = property.value?.value
-        if (value is GdxJsonString) {
+        if (value is GdxJsonLiteral) {
           if (name == "id" || name == "name") {
             candidate = property
             break
@@ -61,10 +65,10 @@ class GdxJsonFoldingBuilder: FoldingBuilder, DumbAware {
 
     } else if (node.elementType in GdxJsonParserDefinition.COMMENTS) {
 
-      if (node.elementType == LINE_COMMENT)
-        return "//... "
+      return if (node.elementType == LINE_COMMENT)
+        "//... "
       else
-        return "/*...*/ "
+        "/*...*/ "
     }
 
     return "..."
@@ -77,7 +81,7 @@ class GdxJsonFoldingBuilder: FoldingBuilder, DumbAware {
             node: ASTNode,
             document: Document,
             descriptors: MutableList<FoldingDescriptor>
-    ): Collection<FoldingDescriptor> {
+    ) {
 
       val type = node.elementType
 
@@ -86,18 +90,16 @@ class GdxJsonFoldingBuilder: FoldingBuilder, DumbAware {
       } else if (type == BLOCK_COMMENT) {
         descriptors.add(FoldingDescriptor(node, node.textRange))
       } else if (type == LINE_COMMENT) {
-        val startOffset = node.startOffset
-        val endOffset = expandLineCommentsRange(node)
-        if (document.getLineNumber(startOffset) != document.getLineNumber(endOffset)) {
-          descriptors.add(FoldingDescriptor(node, TextRange(startOffset, endOffset)))
+        expandLineCommentsRange(node.psi).let { (start, end) ->
+          if (document.getLineNumber(start) != document.getLineNumber(end)) {
+            descriptors.add(FoldingDescriptor(node, TextRange(start, end)))
+          }
         }
       }
 
       for (child in node.children()) {
         collectDescriptorsRecursively(child, document, descriptors)
       }
-
-      return descriptors
 
     }
 
@@ -111,12 +113,28 @@ class GdxJsonFoldingBuilder: FoldingBuilder, DumbAware {
                 document.lineCount - 1
     }
 
-    private fun expandLineCommentsRange(node: ASTNode): Int {
-      var lastElement = node
-      while (lastElement.treeNext.elementType == LINE_COMMENT || lastElement.treeNext.elementType == WHITE_SPACE) {
-        lastElement = lastElement.treeNext
+    private fun expandLineCommentsRange(element: PsiElement): Pair<Int, Int> =
+            Pair(
+                    findLineComment(element, false).textRange.startOffset,
+                    findLineComment(element, true).textRange.endOffset
+            )
+
+    private fun findLineComment(element: PsiElement, after: Boolean): PsiElement {
+      var node = element.node
+      var lastSeen = node
+      while (node != null) {
+        if (node.elementType == LINE_COMMENT) {
+          lastSeen = node
+        } else if (node.elementType == WHITE_SPACE) {
+          if (node.text.indexOf('\n', 1) != -1) {
+            break
+          }
+        } else if (node.elementType != BLOCK_COMMENT) {
+          break
+        }
+        node = if (after) node.treeNext else node.treePrev
       }
-      return lastElement.textRange.endOffset
+      return lastSeen.psi
     }
 
   }

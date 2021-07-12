@@ -27,15 +27,13 @@ class GradlePropertiesTestIdsInspection: LibGDXGradlePropertiesBaseInspection() 
 
   override fun getStaticDescription() = message("testid.html.description")
 
-  override fun getID() = "LibGDXGradlePropertiesTestId"
-
   override fun getDisplayName() = message("testid.name.gradle.properties")
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
 
     return object: PsiElementVisitor() {
 
-      override fun visitElement(element: PsiElement?) {
+      override fun visitElement(element: PsiElement) {
 
         if (element !is Property || !element.isInGradlePropertiesFile()) {
           return

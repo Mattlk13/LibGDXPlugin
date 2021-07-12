@@ -44,7 +44,7 @@ class ColorsFindUsagesHandler private constructor(element: PsiElement): FindUsag
 
   constructor(element: KtStringTemplateExpression): this(element as PsiElement)
 
-  override fun processElementUsages(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
+  override fun processElementUsages(element: PsiElement, processor: Processor<in UsageInfo>, options: FindUsagesOptions): Boolean {
 
     val colorNameToFind = ReadAction.compute<String, Throwable> {
       (element as? PsiLiteralExpression)?.asString()
@@ -80,7 +80,7 @@ private class MyCachedValueProvider(
         val colorNameToFind: String
 ): CachedValueProvider<Collection<PsiElement>> {
 
-  override fun compute(): CachedValueProvider.Result<Collection<PsiElement>>? {
+  override fun compute(): CachedValueProvider.Result<Collection<PsiElement>> {
 
     val result = mutableListOf<PsiElement>()
 
@@ -114,18 +114,27 @@ private class MyCachedValueProvider(
     // Colors.getColors().get(String)
     colorsClasses.mapNotNull { it.findMethodsByName("getColors", false).firstOrNull() }.forEach { method ->
       MethodReferencesSearch.search(method, allScope, true).forEach { reference ->
-        reference.element.getParentOfType<KtDotQualifiedExpression>()?.getParentOfType<KtDotQualifiedExpression>()?.callExpression?.let { call ->
-          call.resolveCallToStrings()?.let { (_, methodName) ->
-            if (methodName == "get") {
-              process(call)
-            }
-          }
-        }
-        reference.element.getParentOfType<PsiCallExpression>()?.getParentOfType<PsiCallExpression>()?.let { call ->
-          if (call.resolveMethod()?.name == "get") {
-            process(call)
-          }
-        }
+        reference
+                .element
+                .getParentOfType<KtDotQualifiedExpression>()
+                ?.getParentOfType<KtDotQualifiedExpression>()
+                ?.callExpression
+                ?.let { call ->
+                  call.resolveCallToStrings()?.let { (_, methodName) ->
+                    if (methodName == "get") {
+                      process(call)
+                    }
+                  }
+                }
+        reference
+                .element
+                .getParentOfType<PsiCallExpression>()
+                ?.getParentOfType<PsiCallExpression>()
+                ?.let { call ->
+                  if (call.resolveMethod()?.name == "get") {
+                    process(call)
+                  }
+                }
       }
     }
 
