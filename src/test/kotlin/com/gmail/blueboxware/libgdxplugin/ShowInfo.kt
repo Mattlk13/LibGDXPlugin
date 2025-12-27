@@ -29,6 +29,7 @@ class ShowInfo : LibGDXCodeInsightFixtureTestCase() {
 
     @Suppress("ReplacePrintlnWithLogging")
     fun testShowInfo() {
+        println()
         println("IntelliJ version: " + ApplicationInfo.getInstance().fullVersion)
         println("IntelliJ build: " + ApplicationInfo.getInstance().build)
         println("Kotlin version: " + KotlinVersion.CURRENT)

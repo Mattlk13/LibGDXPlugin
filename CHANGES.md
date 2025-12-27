@@ -1,3 +1,6 @@
+### 1.27.1
+* Fix [#45](https://github.com/BlueBoxWare/LibGDXPlugin/issues/45): Freeze when creating Enum
+
 ### 1.27
 * gdxAI behaviour trees: Proper indentation handling, (re)formatting support, code style support, toggle comments, small improvements.
 

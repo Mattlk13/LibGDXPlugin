@@ -119,15 +119,15 @@ class TestFindUsages : LibGDXCodeInsightFixtureTestCase() {
                 ?.parent
                 ?.parent
                     as? SkinResourceName)
-                ?.resource
-                ?.classSpecification
-                ?.classNameAsString
+                ?.getResource()
+                ?.getClassSpecification()
+                ?.getClassNameAsString()
 
         assertNotNull(classType)
         for (usageInfo in usagesInfos) {
             assertTrue(usageInfo.element is SkinStringLiteral)
             (usageInfo.element as? SkinPropertyValue)?.let { propertyValue ->
-                val type = propertyValue.property?.resolveToTypeString()
+                val type = propertyValue.getProperty()?.resolveToTypeString()
                 assertNotNull(type)
                 assertTrue(
                     classType?.dollarName == type
@@ -135,10 +135,10 @@ class TestFindUsages : LibGDXCodeInsightFixtureTestCase() {
                 )
             }
             (usageInfo.element as? SkinStringLiteral)?.let { stringLiteral ->
-                assertNotNull((usageInfo.element as? SkinStringLiteral)?.value)
+                assertNotNull((usageInfo.element as? SkinStringLiteral)?.getValue())
                 assertEquals(
                     (stringLiteral.reference?.resolve() as? SkinResource)?.name,
-                    (usageInfo.element as? SkinStringLiteral)?.value
+                    (usageInfo.element as? SkinStringLiteral)?.getValue()
                 )
             }
         }

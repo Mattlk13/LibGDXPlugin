@@ -361,7 +361,7 @@ class TestReferences : AssetsInCodeCodeInsightFixtureTestCase() {
 
         if (referentElement is SkinResource) {
             assertEquals(referentElement.name, StringUtil.stripQuotesAroundValue(referencingElement.text))
-            assertEquals(expectedType, referentElement.classSpecification?.resolveClass()?.qualifiedName)
+            assertEquals(expectedType, referentElement.getClassSpecification()?.resolveClass()?.qualifiedName)
         }
 
     }

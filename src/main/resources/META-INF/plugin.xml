@@ -30,7 +30,7 @@
 
     <change-notes><![CDATA[
         <ul>
-            <li>gdxAI behaviour trees: Proper indentation handling, (re)formatting support, code style support, toggle comments, small improvements.</li>
+            <li>Fix #45: Freeze when creating Enum</li>
         </ul>
         ]]>
     </change-notes>
@@ -47,8 +47,6 @@
 
     <projectListeners>
         <listener class="com.gmail.blueboxware.libgdxplugin.GwtOutdatedListener"
-                  topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
-        <listener class="com.gmail.blueboxware.libgdxplugin.SkinTagsFileListener"
                   topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
     </projectListeners>
 
@@ -208,8 +206,6 @@
                    implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.annotators.SkinColorAnnotator"/>
         <annotator language="LibGDXSkin"
                    implementationClass="com.gmail.blueboxware.libgdxplugin.filetypes.skin.annotators.SkinErrorsAnnotator"/>
-
-        <psi.treeChangeListener implementation="com.gmail.blueboxware.libgdxplugin.SkinTagsChangeListener"/>
 
         <fileType
                 name="libGDX Skin"

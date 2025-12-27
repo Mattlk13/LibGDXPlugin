@@ -106,10 +106,21 @@ internal fun loadAtlas(file: Atlas2File): TextureAtlas {
                 }
             }
             r.getFieldList()
-                .filter { it.key !in listOf("xy", "size", "bounds", "offset", "orig", "offsets", "rotate", "index") }
+                .filter {
+                    it.getKey() !in listOf(
+                        "xy",
+                        "size",
+                        "bounds",
+                        "offset",
+                        "orig",
+                        "offsets",
+                        "rotate",
+                        "index"
+                    )
+                }
                 .forEach { field ->
-                    names.add(field.key)
-                    values.add(field.values.map { it.toIntOrNull() ?: 0 })
+                    names.add(field.getKey())
+                    values.add(field.getValues().map { it.toIntOrNull() ?: 0 })
                 }
 
             if (region.originalWidth == 0 && region.originalHeight == 0) {

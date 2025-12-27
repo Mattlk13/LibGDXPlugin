@@ -1,12 +1,9 @@
 package com.gmail.blueboxware.libgdxplugin.utils
 
 import com.intellij.codeInsight.AnnotationUtil
-import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.RecursionManager
-import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiImmediateClassType
@@ -14,6 +11,7 @@ import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
@@ -52,31 +50,10 @@ internal const val PROPERTY_NAME_TINTED_DRAWABLE_COLOR = "color"
 
 private val KEY = key<CachedValue<TagMap?>>("tag2classMap")
 
-@Service(Service.Level.PROJECT)
-class SkinTagsModificationTracker : SimpleModificationTracker() {
-
-    var isFresh: Boolean = false
-        private set
-
-    override fun getModificationCount(): Long {
-        isFresh = false
-        return super.getModificationCount()
-    }
-
-    override fun incModificationCount() {
-        isFresh = true
-        super.incModificationCount()
-    }
-
-    companion object {
-        fun getInstance(project: Project) = project.service<SkinTagsModificationTracker>()
-    }
-}
-
 internal fun Project.getSkinTag2ClassMap(): TagMap? =
     getCachedValue(
         KEY,
-        SkinTagsModificationTracker.getInstance(this),
+        PsiModificationTracker.MODIFICATION_COUNT,
         ProjectRootManager.getInstance(this)
     ) {
 

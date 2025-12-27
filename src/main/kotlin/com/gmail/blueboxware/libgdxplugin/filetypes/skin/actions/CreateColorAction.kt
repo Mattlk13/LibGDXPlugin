@@ -59,7 +59,8 @@ class CreateColorAction : SimpleCodeInsightAction() {
                 return
             }
 
-            ColorChooserService.instance.showDialog(editor.component, "Choose Color To Create", JBColor.WHITE, true)
+            ColorChooserService.instance
+                .showDialog(editor.component, "Choose Color To Create", JBColor.WHITE, true)
                 ?.let { color ->
                     ApplicationManager.getApplication().runWriteAction {
                         file.addColor(result.first, color = color, useComponents = result.second ?: false)

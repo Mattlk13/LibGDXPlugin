@@ -88,12 +88,12 @@ class TestSetColor : LibGDXCodeInsightFixtureTestCase() {
                     .getClassSpecifications("newColor")
                     .firstOrNull()
                     ?.getResource("color")
-                    ?.`object`
+                    ?.getObject()
                     ?.asColor(true)
 
             assertNotNull(newColor)
             val colorObject =
-                skinFile.getClassSpecifications(COLOR_CLASS_NAME).firstOrNull()?.getResource("color")?.`object`
+                skinFile.getClassSpecifications(COLOR_CLASS_NAME).firstOrNull()?.getResource("color")?.getObject()
             assertNotNull(colorObject)
             colorObject!!.changeColor(newColor!!)?.let { newObject ->
                 WriteCommandAction.runWriteCommandAction(project) {

@@ -74,7 +74,7 @@ class TestFindUsages : PropertiesCodeInsightFixtureTestCase() {
                 val references = element.references.filterIsInstance<GDXPropertyReference>()
                 assertFalse(references.isEmpty())
                 references.forEach { reference ->
-                    (reference as? GDXPropertyReference)?.multiResolve(true)?.forEach { resolved ->
+                    reference.multiResolve(true).forEach { resolved ->
                         assertTrue(resolved.element is Property)
                         (resolved.element as? Property)?.let {
                             assertEquals(property.name, it.name)

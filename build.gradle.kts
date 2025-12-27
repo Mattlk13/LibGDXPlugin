@@ -3,15 +3,16 @@ import org.jetbrains.grammarkit.tasks.GenerateLexerTask
 import org.jetbrains.grammarkit.tasks.GenerateParserTask
 import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("java")
     id("maven-publish")
-    id("org.jetbrains.kotlin.jvm") version "2.1.20"
+    id("org.jetbrains.kotlin.jvm") version "2.3.0"
     id("com.github.blueboxware.tocme") version "1.8"
     id("org.jetbrains.intellij.platform") version "2.10.5"
-    id("org.jetbrains.grammarkit") version "2022.3.2.2"
+    id("org.jetbrains.grammarkit") version "2023.3.0.1"
 }
 
 group = providers.gradleProperty("pluginGroup").get()
@@ -137,6 +138,33 @@ tasks {
         include(project.tasks.getByName<Jar>("annotationsJar").includes)
         archiveBaseName.set(project.tasks.getByName<Jar>("annotationsJar").archiveBaseName)
         archiveVersion.set(providers.gradleProperty("pluginVersion"))
+    }
+
+    withType<PrepareSandboxTask> {
+        doLast {
+            val trustedPathsFile = sandboxConfigDirectory.file("options/trusted-paths.xml").get().asFile
+
+            trustedPathsFile.writeText(
+                """
+            <application>
+              <component name="Trusted.Paths.Settings">
+                <option name="TRUSTED_PATHS">
+                  <list>
+                    <option value="${'$'}USER_HOME$/projects" />
+                  </list>
+                </option>
+              </component>
+              <component name="Trusted.Paths.Settings">
+                <option name="TRUSTED_PATHS">
+                  <list>
+                    <option value="${'$'}USER_HOME$/temp" />
+                  </list>
+                </option>
+              </component>
+            </application>
+            """.trimIndent()
+            )
+        }
     }
 
     fun generateParserTask(path: String, lexer: String, parser: String) {

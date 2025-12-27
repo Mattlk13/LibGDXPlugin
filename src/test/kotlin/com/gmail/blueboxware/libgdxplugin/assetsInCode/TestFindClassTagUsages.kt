@@ -54,7 +54,7 @@ class TestFindClassTagUsages : LibGDXCodeInsightFixtureTestCase() {
                 val usages = findUsages(targetElement)
                 TestCase.assertEquals(numberOfUsagesToFind, usages.size)
                 usages.forEach { usage ->
-                    TestCase.assertEquals(tagName, (usage.element as? SkinClassName)?.value?.plainName)
+                    TestCase.assertEquals(tagName, (usage.element as? SkinClassName)?.getValue()?.plainName)
                 }
                 return
             }

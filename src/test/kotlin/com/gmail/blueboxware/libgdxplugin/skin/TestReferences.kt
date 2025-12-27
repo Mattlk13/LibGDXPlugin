@@ -325,7 +325,8 @@ class TestReferences : LibGDXCodeInsightFixtureTestCase() {
         val field = allowAnalysisOnEdt { sourceElement?.reference?.resolve() as? PsiField }
         assertNotNull(field)
         val expectedName =
-            expectedFieldName ?: (sourceElement?.property?.containingObject?.resolveToTypeString() + "::" + field?.name)
+            expectedFieldName ?: (sourceElement?.getProperty()?.getContainingObject()
+                ?.resolveToTypeString() + "::" + field?.name)
         assertEquals(expectedName, field!!.containingClass?.qualifiedName + "::" + field.name)
     }
 
@@ -347,7 +348,7 @@ class TestReferences : LibGDXCodeInsightFixtureTestCase() {
         if (resourceName != null) {
             assertNotNull(resource)
             assertEquals(resourceName, resource?.name)
-            assertTrue(resource?.classSpecification?.getRealClassNamesAsString()?.contains(resourceType) == true)
+            assertTrue(resource?.getClassSpecification()?.getRealClassNamesAsString()?.contains(resourceType) == true)
         } else {
             assertNull(resource)
         }
@@ -375,7 +376,7 @@ class TestReferences : LibGDXCodeInsightFixtureTestCase() {
             val element = file.findElementAt(myFixture.caretOffset)?.firstParent<SkinStringLiteral>()!!
             val reference = element.reference ?: throw AssertionError()
             val target = reference.resolve() as Atlas2Region
-            assertEquals(element.value, target.name)
+            assertEquals(element.getValue(), target.name)
         }
     }
 
