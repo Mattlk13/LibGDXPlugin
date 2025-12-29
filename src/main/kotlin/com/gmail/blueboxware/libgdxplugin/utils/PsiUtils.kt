@@ -15,7 +15,6 @@ import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.PathUtil
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.permissions.KaAllowAnalysisFromWriteAction
 import org.jetbrains.kotlin.analysis.api.permissions.KaAllowAnalysisOnEdt
 import org.jetbrains.kotlin.analysis.api.permissions.allowAnalysisOnEdt
@@ -237,14 +236,17 @@ internal fun KtQualifiedExpression.resolveCall(): Pair<ClassId, String>? {
         var receiverType: ClassId? =
             if (receiverExpression is KtNameReferenceExpression) (receiverExpression.references.firstOrNull { it is KtSimpleNameReference }
                 ?.resolve() as? PsiClass)?.classId
-            else analyze(receiverExpression) {
+            else analyzeWriteSafe(receiverExpression) {
                 (receiverExpression.expressionType as? KaClassType)?.classId
             }
 
         if (receiverType == null) {
-            receiverType = analyze(receiverExpression) {
+            receiverType = analyzeWriteSafe(receiverExpression) {
                 (receiverExpression.expressionType?.lowerBoundIfFlexible() as? KaClassType)?.classId
-                    ?: return@getCachedValue null
+                    ?: return@analyzeWriteSafe null
+            }
+            if (receiverType == null) {
+                return@getCachedValue null
             }
         }
 
@@ -269,13 +271,13 @@ internal fun KtCallExpression.resolveCallToStrings(): Pair<String, String>? = re
     Pair(it.first.asFqNameString(), it.second.getReferencedName())
 }
 
-internal fun KtExpression.classId(): ClassId? = analyze(this) {
+internal fun KtExpression.classId(): ClassId? = analyzeWriteSafe(this) {
     (expressionType?.lowerBoundIfFlexible() as? KaClassType)?.classId
 }
 
 @OptIn(KaAllowAnalysisOnEdt::class)
 internal fun KtClassLiteralExpression.classId(): String? = allowAnalysisOnEdt {
-    analyze(this) {
+    analyzeWriteSafe(this) {
         (receiverType as? KaClassType)?.classId?.asFqNameString()
     }
 }
@@ -290,7 +292,7 @@ fun KtElement?.getCalleeExpressionIfAny(): KtExpression? =
     }
 
 internal fun KtExpression.fqName(): String? =
-    analyze(this) { (expressionType?.lowerBoundIfFlexible() as? KaClassType)?.classId?.asFqNameString() }
+    analyzeWriteSafe(this) { (expressionType?.lowerBoundIfFlexible() as? KaClassType)?.classId?.asFqNameString() }
 
 internal fun PsiElement.findLeaf(elementType: IElementType): LeafPsiElement? =
     allChildren.firstOrNull { it.isLeaf(elementType) } as? LeafPsiElement
@@ -316,8 +318,7 @@ internal fun PsiElement.findElement(condition: (PsiElement) -> Boolean): PsiElem
 internal inline fun <reified T : PsiElement> PsiElement.getParentOfType(strict: Boolean = true): T? =
     PsiTreeUtil.getParentOfType(this, T::class.java, strict)
 
-internal fun KtAnnotationEntry.classId(): ClassId? = analyze(this) {
-//        (calleeExpression?.expressionType as? KaClassType)?.classId
+internal fun KtAnnotationEntry.classId(): ClassId? = analyzeWriteSafe(this) {
     (calleeExpression?.typeReference?.type as? KaClassType)?.classId
 }
 

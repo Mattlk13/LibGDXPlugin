@@ -30,7 +30,7 @@
 
     <change-notes><![CDATA[
         <ul>
-            <li>Fix #45: Freeze when creating Enum</li>
+            <li>Fix #44: ProhibitedAnalysisException: Analysis is not allowed: Called from a write action</li>
         </ul>
         ]]>
     </change-notes>

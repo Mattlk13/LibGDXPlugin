@@ -12,7 +12,10 @@ import com.intellij.lang.properties.PropertiesLanguage
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.patterns.PlatformPatterns
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiReferenceContributor
+import com.intellij.psi.PsiReferenceRegistrar
 import com.intellij.util.PathUtil
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.analysis.api.permissions.KaAllowAnalysisOnEdt
@@ -82,7 +85,7 @@ internal class KotlinReferenceContributor : PsiReferenceContributor() {
 
         registrar.registerReferenceProvider(
             PlatformPatterns.psiElement(KtStringTemplateExpression::class.java).inside(KtAnnotationEntry::class.java),
-            object : PsiReferenceProvider() {
+            object : LibGDXPsiReferenceProvider() {
 
                 @OptIn(KaAllowAnalysisOnEdt::class)
                 override fun getReferencesByElement(

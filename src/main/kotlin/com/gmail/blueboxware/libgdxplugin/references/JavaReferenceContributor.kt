@@ -4,10 +4,7 @@ import com.gmail.blueboxware.libgdxplugin.filetypes.atlas2.LibGDXAtlas2FileType
 import com.gmail.blueboxware.libgdxplugin.filetypes.atlas2.LibGDXAtlas2Language
 import com.gmail.blueboxware.libgdxplugin.filetypes.skin.LibGDXSkinFileType
 import com.gmail.blueboxware.libgdxplugin.filetypes.skin.LibGDXSkinLanguage
-import com.gmail.blueboxware.libgdxplugin.utils.ASSET_ANNOTATION_ATLAS_PARAM_NAME
-import com.gmail.blueboxware.libgdxplugin.utils.ASSET_ANNOTATION_NAME
-import com.gmail.blueboxware.libgdxplugin.utils.ASSET_ANNOTATION_PROPERTIES_PARAM_NAME
-import com.gmail.blueboxware.libgdxplugin.utils.ASSET_ANNOTATION_SKIN_PARAM_NAME
+import com.gmail.blueboxware.libgdxplugin.utils.*
 import com.intellij.json.JsonFileType
 import com.intellij.lang.Language
 import com.intellij.lang.properties.PropertiesFileType
@@ -81,7 +78,7 @@ internal class JavaReferenceContributor : PsiReferenceContributor() {
         registrar.registerReferenceProvider(
             PsiJavaPatterns.literalExpression(StandardPatterns.string())
                 .insideAnnotationParam(StandardPatterns.string().equalTo(ASSET_ANNOTATION_NAME), paramName),
-            object : PsiReferenceProvider() {
+            object : LibGDXPsiReferenceProvider() {
                 override fun getReferencesByElement(
                     element: PsiElement,
                     context: ProcessingContext

@@ -1,3 +1,6 @@
+### 1.27.2
+* Fix [#44](https://github.com/BlueBoxWare/LibGDXPlugin/issues/44): ProhibitedAnalysisException: Analysis is not allowed: Called from a write action
+
 ### 1.27.1
 * Fix [#45](https://github.com/BlueBoxWare/LibGDXPlugin/issues/45): Freeze when creating Enum
 

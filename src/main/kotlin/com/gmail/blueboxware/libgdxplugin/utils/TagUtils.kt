@@ -12,7 +12,6 @@ import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.base.util.allScope
@@ -144,7 +143,7 @@ private fun Project.collectCustomTags(): TagMap {
                             ?.asPlainString()?.let { firstArgument ->
 
                                 arguments.getOrNull(1)?.getArgumentExpression()?.let { secondArgument ->
-                                    analyze(secondArgument) {
+                                    analyzeWriteSafe(secondArgument) {
                                         (secondArgument.expressionType as? KaClassType)
                                             ?.typeArguments
                                             ?.firstOrNull()

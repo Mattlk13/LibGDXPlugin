@@ -1,5 +1,6 @@
 package com.gmail.blueboxware.libgdxplugin.references
 
+import com.gmail.blueboxware.libgdxplugin.utils.LibGDXPsiReferenceProvider
 import com.gmail.blueboxware.libgdxplugin.utils.getParentOfType
 import com.gmail.blueboxware.libgdxplugin.utils.isColorsGetCall
 import com.intellij.patterns.PlatformPatterns
@@ -33,7 +34,7 @@ internal class ColorsReferenceContributor : PsiReferenceContributor() {
 
         registrar.registerReferenceProvider(
             PlatformPatterns.psiElement(PsiLiteralExpression::class.java),
-            object : PsiReferenceProvider() {
+            object : LibGDXPsiReferenceProvider() {
                 override fun getReferencesByElement(
                     element: PsiElement,
                     context: ProcessingContext
@@ -54,7 +55,7 @@ internal class ColorsReferenceContributor : PsiReferenceContributor() {
         )
 
         registrar.registerReferenceProvider(
-            PlatformPatterns.psiElement(KtStringTemplateExpression::class.java), object : PsiReferenceProvider() {
+            PlatformPatterns.psiElement(KtStringTemplateExpression::class.java), object : LibGDXPsiReferenceProvider() {
                 override fun getReferencesByElement(
                     element: PsiElement,
                     context: ProcessingContext

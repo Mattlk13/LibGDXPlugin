@@ -1,6 +1,7 @@
 package com.gmail.blueboxware.libgdxplugin.utils
 
 import com.intellij.java.library.getMavenCoordinates
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.EmptyProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -16,8 +17,11 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.asSafely
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.idea.base.util.allScope
+import org.jetbrains.kotlin.psi.KtElement
 
 /*
  * Copyright 2017 Blue Box Ware
@@ -142,3 +146,11 @@ internal inline fun <R> Project.getCachedValue(
     }, false)
 
 internal fun <E> List<E>.indexOfOrNull(element: E): Int? = indexOf(element).takeIf { it >= 0 }
+
+internal fun <R> analyzeWriteSafe(
+    useSiteElement: KtElement,
+    action: KaSession.() -> R
+): R? =
+    if (!ApplicationManager.getApplication().isWriteAccessAllowed)
+        analyze(useSiteElement, action)
+    else null
