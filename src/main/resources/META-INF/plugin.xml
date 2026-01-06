@@ -30,7 +30,7 @@
 
     <change-notes><![CDATA[
         <ul>
-            <li>Fix #44: ProhibitedAnalysisException: Analysis is not allowed: Called from a write action</li>
+            <li>Fix #46: java.lang.NoClassDefFoundError: com/intellij/lang/properties/references/PropertiesCompletionContributor</li>
         </ul>
         ]]>
     </change-notes>
@@ -43,6 +43,7 @@
         <plugin id="com.intellij.modules.platform"/>
         <module name="intellij.spellchecker"/>
         <module name="intellij.properties.backend.psi"/>
+        <module name="intellij.properties.backend" />
     </dependencies>
 
     <projectListeners>

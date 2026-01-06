@@ -1,3 +1,6 @@
+### 1.27.3
+* Fix [#46](https://github.com/BlueBoxWare/LibGDXPlugin/issues/46): java.lang.NoClassDefFoundError: com/intellij/lang/properties/references/PropertiesCompletionContributor
+
 ### 1.27.2
 * Fix [#44](https://github.com/BlueBoxWare/LibGDXPlugin/issues/44): ProhibitedAnalysisException: Analysis is not allowed: Called from a write action
 
